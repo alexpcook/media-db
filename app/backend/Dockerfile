@@ -5,3 +5,5 @@ ENV MYSQL_RANDOM_ROOT_PASSWORD=true
 ENV MYSQL_DATABASE=movie
 ENV MYSQL_USER=movieuser
 ENV MYSQL_PASSWORD=moviepass
+
+COPY init_db.sql /docker-entrypoint-initdb.d
