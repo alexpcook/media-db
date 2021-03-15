@@ -7,6 +7,25 @@ import (
 	"time"
 )
 
+func TestMovieJsonMarshal(t *testing.T) {
+	testTime, err := time.Parse(time.RFC3339, "2021-03-14T13:14:15.32-08:00")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	movieStruct := Movie{
+		Title:       "A Movie Title",
+		Director:    "A Movie Director",
+		YearMade:    1955,
+		DateWatched: &testTime,
+	}
+
+	_, err = json.Marshal(movieStruct)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestMovieJsonUnmarshal(t *testing.T) {
 	title := "A Movie Title"
 	director := "A Movie Director"
