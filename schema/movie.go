@@ -14,6 +14,7 @@ type Movie struct {
 }
 
 // NewMovie validates the fields of a Movie struct, creates it, and returns a pointer.
+// The dateWatched parameter should be in the format 'yyyy-mm-dd'.
 // If there are validation problems, a non-nil error is returned.
 func NewMovie(title, director string, yearMade int, dateWatched string) (*Movie, error) {
 	if strings.TrimSpace(title) == "" {
