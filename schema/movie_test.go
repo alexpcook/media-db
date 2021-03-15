@@ -28,6 +28,26 @@ func TestNewMovie(tt *testing.T) {
 			newMovieInput{"a title", "a director", 2000, "2021-03-14"},
 			newMovieOutput{&Movie{}, false},
 		},
+		{
+			"empty title",
+			newMovieInput{"", "a director", 2000, "2021-03-14"},
+			newMovieOutput{nil, true},
+		},
+		{
+			"empty director",
+			newMovieInput{"a title", "\t  \t\n", 2000, "2021-03-14"},
+			newMovieOutput{nil, true},
+		},
+		{
+			"invalid year",
+			newMovieInput{"a title", "a director", 0, "2021-03-14"},
+			newMovieOutput{nil, true},
+		},
+		{
+			"invalid date",
+			newMovieInput{"a title", "a director", 2000, "2021-17-14"},
+			newMovieOutput{nil, true},
+		},
 	}
 
 	for _, test := range testCases {

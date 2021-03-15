@@ -28,6 +28,26 @@ func TestNewMusic(tt *testing.T) {
 			newMusicInput{"a title", "an artist", 2000, "2021-03-14"},
 			newMusicOutput{&Music{}, false},
 		},
+		{
+			"empty title",
+			newMusicInput{"", "an artist", 2000, "2021-03-14"},
+			newMusicOutput{nil, true},
+		},
+		{
+			"empty artist",
+			newMusicInput{"a title", "\t  \t\n", 2000, "2021-03-14"},
+			newMusicOutput{nil, true},
+		},
+		{
+			"invalid year",
+			newMusicInput{"a title", "an artist", -100, "2021-03-14"},
+			newMusicOutput{nil, true},
+		},
+		{
+			"invalid date",
+			newMusicInput{"a title", "an artist", 2000, "2021-17-14"},
+			newMusicOutput{nil, true},
+		},
 	}
 
 	for _, test := range testCases {
