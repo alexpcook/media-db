@@ -17,7 +17,7 @@ func TestMovieJsonMarshal(t *testing.T) {
 		Title:       "A Movie Title",
 		Director:    "A Movie Director",
 		YearMade:    1955,
-		DateWatched: &testTime,
+		DateWatched: testTime,
 	}
 
 	_, err = json.Marshal(movieStruct)
@@ -57,7 +57,7 @@ func TestMovieJsonUnmarshal(t *testing.T) {
 		t.Fatalf("Expected %d for Movie.YearMade field, got %d", year, movieStruct.YearMade)
 	}
 
-	if d, err := time.Parse(time.RFC3339, date); !d.Equal(*movieStruct.DateWatched) || err != nil {
+	if d, err := time.Parse(time.RFC3339, date); !d.Equal(movieStruct.DateWatched) || err != nil {
 		t.Fatalf("Expected %s for Movie.DateWatched field, got %s %v", date, movieStruct.DateWatched, err)
 	}
 }

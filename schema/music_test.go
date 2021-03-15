@@ -17,7 +17,7 @@ func TestMusicJsonMarshal(t *testing.T) {
 		Title:        "An Album Title",
 		Artist:       "An Artist",
 		YearMade:     1993,
-		DateListened: &testTime,
+		DateListened: testTime,
 	}
 
 	_, err = json.Marshal(musicStruct)
@@ -57,7 +57,7 @@ func TestMusicJsonUnmarshal(t *testing.T) {
 		t.Fatalf("Expected %d for Music.YearMade field, got %d", year, musicStruct.YearMade)
 	}
 
-	if d, err := time.Parse(time.RFC3339, date); !d.Equal(*musicStruct.DateListened) || err != nil {
+	if d, err := time.Parse(time.RFC3339, date); !d.Equal(musicStruct.DateListened) || err != nil {
 		t.Fatalf("Expected %s for Music.DateListened field, got %s %v", date, musicStruct.DateListened, err)
 	}
 }
