@@ -8,3 +8,7 @@ type Movie struct {
 	YearMade    int        `json:"year"`
 	DateWatched *time.Time `json:"date"`
 }
+
+func NewMovie(title, director string, yearMade int, dateWatched string) (*Movie, error) {
+	return &Movie{}, nil
+}
