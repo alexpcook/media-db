@@ -11,12 +11,24 @@ func TestStringToUnixTime(tt *testing.T) {
 		input   string
 		isError bool
 	}{
-		{"2006-01-02T15:04:05Z", false},
-		{"2006-01-02T00:00:00-07:00", false},
-		{"1900-01-02T15:04:05+07:00", false},
-		{"2021-10-30T00:15:15.65Z", false},
-		{"invalid date string", true},
-		{"2021-11-11", true},
+		{"2006-01-02", false},
+		{"2021-03-14", false},
+		{"1990-06-12", false},
+		{"2021", true},
+		{"2021-05", true},
+		{"abc-05-21", true},
+		{"2021--21", true},
+		{"2021-04-1.4", true},
+		{"0-01-02", true},
+		{"1851-01-02", false},
+		{"2006-0-04", true},
+		{"2006-1-04", false},
+		{"2006-13-02", true},
+		{"2006-12-02", false},
+		{"2006-06-00", true},
+		{"2006-06-01", false},
+		{"2006-06-32", true},
+		{"2006-06-31", false},
 	}
 
 	unixTimeZero := time.Unix(0, 0)
