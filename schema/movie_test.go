@@ -58,5 +58,4 @@ func TestNewMovie(tt *testing.T) {
 			}
 		})
 	}
-
 }
