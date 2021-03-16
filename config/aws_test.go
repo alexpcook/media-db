@@ -35,26 +35,51 @@ func TestGetConfigFilePath(tt *testing.T) {
 	}
 }
 
+func invalidFilePathTestName() string {
+	return "invalid-filepath"
+}
+
 func TestLoadConfig(tt *testing.T) {
 	testCases := []struct {
-		name, aws, s3 string
-		config        *MediaDbConfig
-		isError       bool
+		name    string
+		json    []byte
+		config  *MediaDbConfig
+		isError bool
 	}{
-		{"basic", "test-profile", "test-bucket", &MediaDbConfig{}, false},
-		{"invalid-filepath", "test-profile", "test-bucket", nil, true},
-		{"invalid-json", "test-profile", "test-bucket", nil, true},
-		{"null-profile", "   ", "test-bucket", nil, true},
-		{"null-bucket", "test-profile", "", nil, true},
+		{
+			"basic",
+			[]byte(`{"awsprofile": "test-profile", "s3bucket": "test-bucket"}`),
+			&MediaDbConfig{AWSProfile: "test-profile", S3BucketName: "test-bucket"},
+			false,
+		},
+		{
+			invalidFilePathTestName(),
+			[]byte(`{"awsprofile": "test-profile", "s3bucket": "test-bucket"}`),
+			nil,
+			true,
+		},
+		{
+			"invalid-json",
+			[]byte(`{"awsprofile: "test-profile", "s3bucket": "test-bucket"}`),
+			nil,
+			true,
+		},
+		{
+			"null-profile",
+			[]byte(`{"awsprofile": "   ", "s3bucket": "test-bucket"}`),
+			nil,
+			true,
+		},
+		{
+			"null-bucket",
+			[]byte(`{"awsprofile": "test-profile", "s3bucket": ""}`),
+			nil,
+			true,
+		},
 	}
 
-	for i, test := range testCases {
+	for _, test := range testCases {
 		tt.Run(test.name, func(subtt *testing.T) {
-			data := []byte(fmt.Sprintf(`{"awsprofile": "%s", "s3bucket": "%s"}`, test.aws, test.s3))
-			if i == 2 { // invalid json test case
-				data = []byte(fmt.Sprintf(`{"awsprofile: "%s", "s3bucket": "%s"}`, test.aws, test.s3))
-			}
-
 			tempConfigFile, err := os.CreateTemp("", "aws_test")
 			if err != nil {
 				subtt.Fatal(err)
@@ -66,14 +91,14 @@ func TestLoadConfig(tt *testing.T) {
 				}
 			}()
 
-			_, err = tempConfigFile.Write(data)
+			_, err = tempConfigFile.Write(test.json)
 			if err != nil {
 				subtt.Fatal(err)
 			}
 
 			filepath := tempConfigFile.Name()
-			if i == 1 { // invalid filepath test case
-				filepath = "an invalid filepath name"
+			if test.name == invalidFilePathTestName() {
+				filepath = "an invalid filepath"
 			}
 
 			got, err := LoadConfig(filepath)
@@ -85,9 +110,6 @@ func TestLoadConfig(tt *testing.T) {
 			} else if err != nil {
 				subtt.Fatal(err)
 			}
-
-			test.config.AWSProfile = test.aws
-			test.config.S3BucketName = test.s3
 
 			if !reflect.DeepEqual(test.config, got) {
 				subtt.Fatalf("want %v, got %v", test.config, got)
