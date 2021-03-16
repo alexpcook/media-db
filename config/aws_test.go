@@ -49,7 +49,7 @@ func TestLoadConfig(tt *testing.T) {
 		{
 			"basic",
 			[]byte(`{"awsprofile": "test-profile", "s3bucket": "test-bucket"}`),
-			&MediaDbConfig{AWSProfile: "test-profile", S3BucketName: "test-bucket"},
+			&MediaDbConfig{AWSProfile: "test-profile", S3Bucket: "test-bucket"},
 			false,
 		},
 		{
