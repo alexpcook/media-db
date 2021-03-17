@@ -2,6 +2,7 @@ package schema
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -12,6 +13,17 @@ type Music struct {
 	Artist       string `json:"artist"`
 	YearMade     int    `json:"year"`
 	DateListened int64  `json:"date"`
+}
+
+// MarshalJSON returns Music as JSON bytes.
+func (m *Music) MarshalJSON() ([]byte, error) {
+	return json.Marshal(*m)
+}
+
+// UnmarshalJSON populates the underlying Music pointer
+// with the given JSON bytes b.
+func (m *Music) UnmarshalJSON(b []byte) error {
+	return json.Unmarshal(b, m)
 }
 
 // S3Key returns the unique S3 object key for storage in the database.
