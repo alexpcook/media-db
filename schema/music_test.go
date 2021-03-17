@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"encoding/base64"
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -75,6 +77,11 @@ func TestNewMusic(tt *testing.T) {
 
 			if !reflect.DeepEqual(test.output.music, music) {
 				subtt.Fatalf("want %v, got %v", test.output.music, music)
+			}
+
+			wantKey := "music" + "/" + fmt.Sprint(music.YearMade) + "/" + base64.URLEncoding.EncodeToString([]byte(music.Title))
+			if gotKey := music.S3Key(); wantKey != gotKey {
+				subtt.Fatalf("s3 key error: want %v, got %v", wantKey, gotKey)
 			}
 		})
 	}
