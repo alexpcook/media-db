@@ -123,3 +123,36 @@ func TestLoadMediaDbConfig(tt *testing.T) {
 		})
 	}
 }
+
+func TestLoadAWSConfig(tt *testing.T) {
+	testCases := []struct {
+		name    string
+		db      *MediaDbConfig
+		isError bool
+	}{
+		{
+			"basic",
+			&MediaDbConfig{AWSProfile: "test-profile", AWSRegion: "us-west-1", S3Bucket: "test-bucket"},
+			false,
+		},
+	}
+
+	for _, test := range testCases {
+		tt.Run(test.name, func(subtt *testing.T) {
+			cfg, err := test.db.LoadAWSConfig()
+
+			if test.isError {
+				if err == nil {
+					subtt.Fatal("want error, got nil")
+				}
+				return
+			} else if err != nil {
+				subtt.Fatal(err)
+			}
+
+			if test.db.AWSRegion != cfg.Region {
+				subtt.Fatalf("error with region: want %s, got %s", test.db.AWSRegion, cfg.Region)
+			}
+		})
+	}
+}

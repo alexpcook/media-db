@@ -1,11 +1,15 @@
 package config
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path"
 	"strings"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
 )
 
 const (
@@ -63,4 +67,19 @@ func LoadMediaDbConfig(filepath string) (*MediaDbConfig, error) {
 	}
 
 	return &config, nil
+}
+
+// LoadAWSConfig returns an AWS Go SDK v2 Config struct from
+// the MediaDbConfig settings. A non-nil error is returned if
+// there is a problem loading the AWS config.
+func (db *MediaDbConfig) LoadAWSConfig() (aws.Config, error) {
+	config, err := config.LoadDefaultConfig(context.TODO(),
+		config.WithSharedConfigProfile(db.AWSProfile),
+		config.WithRegion(db.AWSRegion))
+
+	if err != nil {
+		return aws.Config{}, err
+	}
+
+	return config, nil
 }
