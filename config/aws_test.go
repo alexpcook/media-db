@@ -39,7 +39,7 @@ func invalidFilePathTestName() string {
 	return "invalid-filepath"
 }
 
-func TestLoadConfig(tt *testing.T) {
+func TestLoadMediaDbConfig(tt *testing.T) {
 	testCases := []struct {
 		name    string
 		json    []byte
@@ -101,7 +101,7 @@ func TestLoadConfig(tt *testing.T) {
 				filepath = "an invalid filepath"
 			}
 
-			got, err := LoadConfig(filepath)
+			got, err := LoadMediaDbConfig(filepath)
 			if test.isError {
 				if err == nil {
 					subtt.Fatal("want error, got nil")

@@ -37,7 +37,7 @@ func GetConfigFilePath(configDirName, configFileName string) (string, error) {
 // LoadConfig loads the AWS config from filepath and returns a pointer to it.
 // The error will be non-nil if the config file cannot be read or its JSON
 // cannot be parsed.
-func LoadConfig(filepath string) (*MediaDbConfig, error) {
+func LoadMediaDbConfig(filepath string) (*MediaDbConfig, error) {
 	data, err := os.ReadFile(filepath)
 	if err != nil {
 		return nil, err
