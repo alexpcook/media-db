@@ -16,7 +16,7 @@ type Movie struct {
 
 // S3Key returns the unique S3 object key for storage in the database.
 // For example, /movie/2021/QSBNb3ZpZQ==
-func (m *Movie) S3Key() string {
+func (m Movie) S3Key() string {
 	baseDir := "movie"
 
 	return strings.Join([]string{

@@ -16,7 +16,7 @@ type Music struct {
 
 // S3Key returns the unique S3 object key for storage in the database.
 // For example, /music/2021/QW4gQWxidW0=
-func (m *Music) S3Key() string {
+func (m Music) S3Key() string {
 	baseDir := "music"
 
 	return strings.Join([]string{
