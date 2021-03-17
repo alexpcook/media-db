@@ -48,31 +48,37 @@ func TestLoadMediaDbConfig(tt *testing.T) {
 	}{
 		{
 			"basic",
-			[]byte(`{"awsprofile": "test-profile", "s3bucket": "test-bucket"}`),
-			&MediaDbConfig{AWSProfile: "test-profile", S3Bucket: "test-bucket"},
+			[]byte(`{"profile": "test-profile", "region": "us-west-1", "bucket": "test-bucket"}`),
+			&MediaDbConfig{AWSProfile: "test-profile", AWSRegion: "us-west-1", S3Bucket: "test-bucket"},
 			false,
 		},
 		{
 			invalidFilePathTestName(),
-			[]byte(`{"awsprofile": "test-profile", "s3bucket": "test-bucket"}`),
+			[]byte(`{"profile": "test-profile", "region": "us-west-1", "bucket": "test-bucket"}`),
 			nil,
 			true,
 		},
 		{
 			"invalid-json",
-			[]byte(`{"awsprofile: "test-profile", "s3bucket": "test-bucket"}`),
+			[]byte(`{"profile: "test-profile", "region": "us-west-1", "bucket": "test-bucket"}`),
 			nil,
 			true,
 		},
 		{
 			"null-profile",
-			[]byte(`{"awsprofile": "   ", "s3bucket": "test-bucket"}`),
+			[]byte(`{"profile": "    ", "region": "us-west-1", "bucket": "test-bucket"}`),
+			nil,
+			true,
+		},
+		{
+			"null-region",
+			[]byte(`{"profile": "test-profile", "region": "   ", "bucket": "test-bucket"}`),
 			nil,
 			true,
 		},
 		{
 			"null-bucket",
-			[]byte(`{"awsprofile": "test-profile", "s3bucket": ""}`),
+			[]byte(`{"profile": "test-profile", "region": "us-west-1", "bucket": ""}`),
 			nil,
 			true,
 		},

@@ -15,11 +15,12 @@ const (
 	DefaultConfigFile string = "config"
 )
 
-// MediaDbConfig contains the AWS profile and S3 bucket name to use
+// MediaDbConfig contains the AWS profile, region, and S3 bucket name to use
 // for interacting with the database.
 type MediaDbConfig struct {
-	AWSProfile string `json:"awsprofile"`
-	S3Bucket   string `json:"s3bucket"`
+	AWSProfile string `json:"profile"`
+	AWSRegion  string `json:"region"`
+	S3Bucket   string `json:"bucket"`
 }
 
 // GetConfigFilePath returns an absolute filepath to configFileName in
@@ -50,11 +51,15 @@ func LoadMediaDbConfig(filepath string) (*MediaDbConfig, error) {
 	}
 
 	if strings.TrimSpace(config.AWSProfile) == "" {
-		return nil, fmt.Errorf("awsprofile cannot be only space, got %q", config.AWSProfile)
+		return nil, fmt.Errorf("profile cannot be only space, got %q", config.AWSProfile)
+	}
+
+	if strings.TrimSpace(config.AWSRegion) == "" {
+		return nil, fmt.Errorf("region cannot be only space, got %q", config.AWSRegion)
 	}
 
 	if strings.TrimSpace(config.S3Bucket) == "" {
-		return nil, fmt.Errorf("s3bucket cannot be only space, got %q", config.S3Bucket)
+		return nil, fmt.Errorf("bucket cannot be only space, got %q", config.S3Bucket)
 	}
 
 	return &config, nil
