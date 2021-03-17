@@ -14,6 +14,8 @@ type Music struct {
 	DateListened int64  `json:"date"`
 }
 
+// S3Key returns the unique S3 object key for storage in the database.
+// For example, /music/2021/QW4gQWxidW0=
 func (m *Music) S3Key() string {
 	baseDir := "music"
 
