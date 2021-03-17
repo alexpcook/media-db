@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"encoding/base64"
 	"fmt"
 	"strings"
 )
@@ -13,15 +14,27 @@ type Movie struct {
 	DateWatched int64  `json:"date"`
 }
 
+func (m *Movie) S3Key() string {
+	baseDir := "movie"
+
+	return strings.Join([]string{
+		baseDir,
+		fmt.Sprint(m.YearMade),
+		base64.URLEncoding.EncodeToString([]byte(m.Title)),
+	}, "/")
+}
+
 // NewMovie validates the fields of a Movie struct, creates it, and returns a pointer.
 // The dateWatched parameter should be in the format 'yyyy-mm-dd'.
 // If there are validation problems, a non-nil error is returned.
 func NewMovie(title, director string, yearMade int, dateWatched string) (*Movie, error) {
-	if strings.TrimSpace(title) == "" {
+	title = strings.TrimSpace(title)
+	if title == "" {
 		return nil, fmt.Errorf("title cannot be only space, got %q", title)
 	}
 
-	if strings.TrimSpace(director) == "" {
+	director = strings.TrimSpace(director)
+	if director == "" {
 		return nil, fmt.Errorf("director cannot be only space, got %q", director)
 	}
 
@@ -29,7 +42,7 @@ func NewMovie(title, director string, yearMade int, dateWatched string) (*Movie,
 		return nil, fmt.Errorf("yearMade must be positive, got %d", yearMade)
 	}
 
-	unixTime, err := StringToUnixTime(dateWatched)
+	unixTime, err := StringToUnixTime(strings.TrimSpace(dateWatched))
 	if err != nil {
 		return nil, err
 	}
