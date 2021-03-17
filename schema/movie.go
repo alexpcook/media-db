@@ -2,7 +2,6 @@ package schema
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -25,17 +24,6 @@ func (m *Movie) S3Key() string {
 		fmt.Sprint(m.YearMade),
 		base64.URLEncoding.EncodeToString([]byte(m.Title)),
 	}, "/")
-}
-
-// MarshalJSON returns Movie as JSON bytes.
-func (m *Movie) MarshalJSON() ([]byte, error) {
-	return json.Marshal(*m)
-}
-
-// UnmarshalJSON populates the underlying Movie pointer
-// with the given JSON bytes b.
-func (m *Movie) UnmarshalJSON(b []byte) error {
-	return json.Unmarshal(b, m)
 }
 
 // NewMovie validates the fields of a Movie struct, creates it, and returns a pointer.
