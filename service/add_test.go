@@ -14,10 +14,11 @@ func handleError(err error, tt *testing.T) {
 }
 
 func TestAdd(tt *testing.T) {
-	filepath, err := config.GetConfigFilePath(config.DefaultConfigDir, config.DefaultConfigFile)
-	handleError(err, tt)
+	if *testConfigFilepath == "" {
+		tt.Fatalf("a media db config file for testing must be supplied, got %q", *testConfigFilepath)
+	}
 
-	cfg, err := config.LoadMediaDbConfig(filepath)
+	cfg, err := config.LoadMediaDbConfig(*testConfigFilepath)
 	handleError(err, tt)
 
 	client, err := NewMediaDbClient(cfg)
