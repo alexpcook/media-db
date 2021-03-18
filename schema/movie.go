@@ -6,7 +6,8 @@ import (
 	"strings"
 )
 
-// Movie contains information about a single film. DateWatched is a Unix timestamp.
+// Movie contains information about a single film.
+// DateWatched is a Unix timestamp.
 type Movie struct {
 	Title       string `json:"title"`
 	Director    string `json:"director"`
@@ -26,25 +27,27 @@ func (m Movie) S3Key() string {
 	}, "/")
 }
 
-// NewMovie validates the fields of a Movie struct, creates it, and returns a pointer.
+// NewMovie validates the given inputs and returns a pointer to a Movie type.
 // The dateWatched parameter should be in the format 'yyyy-mm-dd'.
 // If there are validation problems, a non-nil error is returned.
 func NewMovie(title, director string, yearMade int, dateWatched string) (*Movie, error) {
-	title = strings.TrimSpace(title)
+	trim := strings.TrimSpace
+
+	title = trim(title)
 	if title == "" {
-		return nil, fmt.Errorf("title cannot be only space, got %q", title)
+		return nil, fmt.Errorf("title cannot be null, got %q", title)
 	}
 
-	director = strings.TrimSpace(director)
+	director = trim(director)
 	if director == "" {
-		return nil, fmt.Errorf("director cannot be only space, got %q", director)
+		return nil, fmt.Errorf("director cannot be null, got %q", director)
 	}
 
 	if yearMade < 1 {
 		return nil, fmt.Errorf("yearMade must be positive, got %d", yearMade)
 	}
 
-	unixTime, err := StringToUnixTime(strings.TrimSpace(dateWatched))
+	unixTime, err := StringToUnixTime(trim(dateWatched))
 	if err != nil {
 		return nil, err
 	}

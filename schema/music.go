@@ -6,7 +6,8 @@ import (
 	"strings"
 )
 
-// Music contains information about a single piece of music. DateListened is a Unix timestamp.
+// Music contains information about a single piece of music.
+// DateListened is a Unix timestamp.
 type Music struct {
 	Title        string `json:"title"`
 	Artist       string `json:"artist"`
@@ -26,25 +27,27 @@ func (m Music) S3Key() string {
 	}, "/")
 }
 
-// NewMusic validates the fields of a Music struct, creates it, and returns a pointer.
+// NewMusic validates the given inputs and returns a pointer to a Music type.
 // The dateListened parameter should be in the format 'yyyy-mm-dd'.
 // If there are validation problems, a non-nil error is returned.
 func NewMusic(title, artist string, yearMade int, dateListened string) (*Music, error) {
-	title = strings.TrimSpace(title)
+	trim := strings.TrimSpace
+
+	title = trim(title)
 	if title == "" {
-		return nil, fmt.Errorf("title cannot be only space, got %q", title)
+		return nil, fmt.Errorf("title cannot be null, got %q", title)
 	}
 
-	artist = strings.TrimSpace(artist)
+	artist = trim(artist)
 	if artist == "" {
-		return nil, fmt.Errorf("artist cannot be only space, got %q", artist)
+		return nil, fmt.Errorf("artist cannot be null, got %q", artist)
 	}
 
 	if yearMade < 1 {
 		return nil, fmt.Errorf("yearMade must be positive, got %d", yearMade)
 	}
 
-	unixTime, err := StringToUnixTime(strings.TrimSpace(dateListened))
+	unixTime, err := StringToUnixTime(trim(dateListened))
 	if err != nil {
 		return nil, err
 	}
