@@ -14,8 +14,8 @@ func handleError(err error, tt *testing.T) {
 }
 
 func TestAdd(tt *testing.T) {
-	if *testConfigFilepath == "" {
-		tt.Fatalf("a media db config file for testing must be supplied, got %q", *testConfigFilepath)
+	if testConfigFile == "" {
+		tt.Fatalf("a media db config file for testing must be supplied, got %q", testConfigFile)
 	}
 
 	cfg, err := config.LoadMediaDbConfig()

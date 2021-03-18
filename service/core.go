@@ -15,8 +15,8 @@ type MediaDbClient struct {
 	s3Bucket string
 }
 
-// NewMediaDbClient creates a MediaDbClient struct from the settings in the given
-// MediaDbConfig struct. Any problem loading the AWS credentials, configuration,
+// NewMediaDbClient creates a MediaDbClient from the settings in the given
+// MediaDbConfig. Any problem loading the AWS credentials, configuration,
 // or accessing the S3 bucket will return a non-nil error.
 func NewMediaDbClient(mediaDbConfig *cfg.MediaDbConfig) (*MediaDbClient, error) {
 	awsConfig, err := config.LoadDefaultConfig(context.TODO(),
@@ -27,17 +27,18 @@ func NewMediaDbClient(mediaDbConfig *cfg.MediaDbConfig) (*MediaDbClient, error) 
 	}
 
 	s3Client := s3.NewFromConfig(awsConfig)
-	mediaDbClient := &MediaDbClient{
+	mediaDbClient := MediaDbClient{
 		s3Client: s3Client,
 		s3Bucket: mediaDbConfig.S3Bucket,
 	}
 
 	// Validate access to the S3 bucket.
-	_, err = mediaDbClient.s3Client.HeadBucket(context.TODO(),
-		&s3.HeadBucketInput{Bucket: &mediaDbClient.s3Bucket})
+	_, err = mediaDbClient.s3Client.HeadBucket(context.TODO(), &s3.HeadBucketInput{
+		Bucket: &mediaDbClient.s3Bucket,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	return mediaDbClient, nil
+	return &mediaDbClient, nil
 }
