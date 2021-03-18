@@ -23,7 +23,7 @@ func TestGetConfigFilePath(tt *testing.T) {
 
 	for i, test := range testCases {
 		tt.Run(fmt.Sprintf("case-%d", i), func(subtt *testing.T) {
-			filepath, err := GetConfigFilePath(test.dir, test.file)
+			filepath, err := getConfigFilePath(test.dir, test.file)
 			if err != nil {
 				subtt.Fatal(err)
 			}
