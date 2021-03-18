@@ -8,6 +8,9 @@ import (
 )
 
 func TestAdd(tt *testing.T) {
+	preTestSetup()
+	defer postTestTeardown()
+
 	cfg, err := config.LoadMediaDbConfig()
 	if err != nil {
 		tt.Fatal(err)
