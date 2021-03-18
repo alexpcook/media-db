@@ -1,27 +1,25 @@
 package config
 
 import (
+	"errors"
 	"log"
 	"os"
-	"path"
 	"reflect"
 	"testing"
 )
 
 func init() {
-	err := os.Unsetenv(getOverrideConfigFilePathEnvVarName())
+	err := os.Unsetenv(GetOverrideConfigFileEnvVar())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	defaultConfigFile, err := getConfigFilePath()
-	if err != nil && !os.IsNotExist(err) {
-		log.Fatal(err)
-	}
-
-	err = os.Remove(defaultConfigFile)
-	if err != nil && !os.IsNotExist(err) {
-		log.Fatal(err)
+	err = os.Remove(GetDefaultConfigFile())
+	if err != nil {
+		if !errors.Is(err, os.ErrNotExist) {
+			log.Fatal(err)
+		}
+		log.Println(err)
 	}
 }
 
@@ -30,12 +28,7 @@ func invalidFilePathTestName() string {
 }
 
 func TestLoadMediaDbConfig(tt *testing.T) {
-	userHomeDirName, err := os.UserHomeDir()
-	if err != nil {
-		tt.Fatal(err)
-	}
-
-	defaultConfigFile, err := os.Create(path.Join(userHomeDirName, getDefaultConfigDirName(), getDefaultConfigFileName()))
+	defaultConfigFile, err := os.Create(GetDefaultConfigFile())
 	if err != nil {
 		tt.Fatal(err)
 	}
@@ -166,15 +159,15 @@ func TestLoadMediaDbConfigOverride(tt *testing.T) {
 				}
 			}()
 
-			err = os.Setenv(getOverrideConfigFilePathEnvVarName(), overrideConfigFile.Name())
+			err = os.Setenv(GetOverrideConfigFileEnvVar(), overrideConfigFile.Name())
 			if test.name == invalidFilePathTestName() {
-				err = os.Setenv(getOverrideConfigFilePathEnvVarName(), "/an/invalid/config/file/path")
+				err = os.Setenv(GetOverrideConfigFileEnvVar(), "/an/invalid/config/file/path")
 			}
 			if err != nil {
 				subtt.Fatal(err)
 			}
 			defer func() {
-				err = os.Unsetenv(getOverrideConfigFilePathEnvVarName())
+				err = os.Unsetenv(GetOverrideConfigFileEnvVar())
 				if err != nil {
 					subtt.Fatal(err)
 				}

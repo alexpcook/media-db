@@ -3,21 +3,47 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"path"
 	"strings"
 )
 
-func getDefaultConfigDirName() string {
-	return ".mediadb"
+// GetDefaultConfigFile returns the default database configuration file
+// location. For example, $HOME/.mediadb/config on Unix systems.
+func GetDefaultConfigFile() string {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return path.Join(homeDir, ".mediadb", "config")
 }
 
-func getDefaultConfigFileName() string {
-	return "config"
+// GetOverrideConfigFile returns the override database configuration file
+// location if it is set via the environment variable returned by
+// GetOverrideConfigFileEnvVar, else "".
+func GetOverrideConfigFile() string {
+	if override, isSet := os.LookupEnv(GetOverrideConfigFileEnvVar()); isSet {
+		return path.Join(override)
+	}
+
+	return ""
 }
 
-func getOverrideConfigFilePathEnvVarName() string {
+// GetOverrideConfigFileEnvVar returns the name of the environment variable
+// used to override the default database configuration file location.
+func GetOverrideConfigFileEnvVar() string {
 	return "MEDIA_DB_CONFIG_FILE"
+}
+
+// GetCurrentConfigFile returns the current database configuration file.
+func GetCurrentConfigFile() string {
+	if overrideFile := GetOverrideConfigFile(); overrideFile != "" {
+		return overrideFile
+	}
+
+	return GetDefaultConfigFile()
 }
 
 // MediaDbConfig contains the AWS profile, region, and S3 bucket name to use
@@ -28,41 +54,13 @@ type MediaDbConfig struct {
 	S3Bucket   string `json:"bucket"`
 }
 
-func getConfigFilePath() (string, error) {
-	if override, isSet := os.LookupEnv(getOverrideConfigFilePathEnvVarName()); isSet {
-		_, err := os.Stat(override)
-		if err == nil {
-			return path.Join(override), nil
-		}
-	}
-
-	userHomeDirName, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-
-	filepath := path.Join(userHomeDirName, getDefaultConfigDirName(), getDefaultConfigFileName())
-	_, err = os.Stat(filepath)
-	if err != nil {
-		return "", err
-	}
-
-	return filepath, nil
-}
-
 // LoadMediaDbConfig loads the database config and returns a pointer to it. It
-// will first look for configuration in a valid override filepath in the
-// environment variable MEDIA_DB_CONFIG_FILE. If no valid override file is
-// found, it will use the file ./.mediadb/config in the user's home directory.
-// The error will be non-nil if a valid config file cannot be found or its
-// settings cannot be parsed.
+// will first look for configuration in an override file in the environment
+// variable MEDIA_DB_CONFIG_FILE. If no override file is found, it will use the
+// file ~/.mediadb/config in the user's home directory. The error will be
+// non-nil if a valid config file cannot be found or its settings cannot be parsed.
 func LoadMediaDbConfig() (*MediaDbConfig, error) {
-	configFile, err := getConfigFilePath()
-	if err != nil {
-		return nil, err
-	}
-
-	configData, err := os.ReadFile(configFile)
+	configData, err := os.ReadFile(GetCurrentConfigFile())
 	if err != nil {
 		return nil, err
 	}
