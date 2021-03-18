@@ -27,6 +27,12 @@ func TestAdd(tt *testing.T) {
 	if err != nil {
 		tt.Fatal(err)
 	}
+	defer func() {
+		err = client.Delete(movie)
+		if err != nil {
+			tt.Fatal(err)
+		}
+	}()
 
 	music, err := schema.NewMusic("An Album Title", "An Artist", 1980, "2020-03-16")
 	if err != nil {
@@ -37,4 +43,10 @@ func TestAdd(tt *testing.T) {
 	if err != nil {
 		tt.Fatal(err)
 	}
+	defer func() {
+		err = client.Delete(music)
+		if err != nil {
+			tt.Fatal(err)
+		}
+	}()
 }
