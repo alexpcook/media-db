@@ -24,10 +24,10 @@ type MediaDbConfig struct {
 	S3Bucket   string `json:"bucket"`
 }
 
-// GetConfigFilePath returns an absolute filepath to configFileName in
+// getConfigFilePath returns an absolute filepath to configFileName in
 // configDirName in the user's home directory. The error will be non-nil
 // if there is a problem determining the user's home directory.
-func GetConfigFilePath(configDirName, configFileName string) (string, error) {
+func getConfigFilePath(configDirName, configFileName string) (string, error) {
 	userHomeDirName, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
