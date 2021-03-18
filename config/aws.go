@@ -11,6 +11,7 @@ import (
 const (
 	// DefaultConfigDir is the default AWS configuration directory name.
 	DefaultConfigDir string = ".mediadb"
+
 	// DefaultConfigFile is the default AWS configuration file name.
 	DefaultConfigFile string = "config"
 )
@@ -35,7 +36,7 @@ func GetConfigFilePath(configDirName, configFileName string) (string, error) {
 	return path.Join(userHomeDirName, configDirName, configFileName), nil
 }
 
-// LoadConfig loads the AWS config from filepath and returns a pointer to it.
+// LoadMediaDbConfig loads the AWS config from filepath and returns a pointer to it.
 // The error will be non-nil if the config file cannot be read or its JSON
 // cannot be parsed.
 func LoadMediaDbConfig(filepath string) (*MediaDbConfig, error) {
