@@ -14,6 +14,8 @@ var (
 )
 
 func preTestSetup() {
+	flag.Parse()
+
 	if *testConfigFile == "" {
 		log.Fatalf("must specify a media db configuration file for testing, got %q", *testConfigFile)
 	}

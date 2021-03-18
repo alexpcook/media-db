@@ -1,15 +1,21 @@
 package service
 
 import (
+	"os"
 	"testing"
 
 	"github.com/alexpcook/media-db-console/config"
 )
 
-func TestNewMediaDbClient(tt *testing.T) {
+func TestMain(m *testing.M) {
 	preTestSetup()
-	defer postTestTeardown()
+	code := m.Run()
 
+	postTestTeardown()
+	os.Exit(code)
+}
+
+func TestNewMediaDbClient(tt *testing.T) {
 	cfg, err := config.LoadMediaDbConfig()
 	if err != nil {
 		tt.Fatal(err)
