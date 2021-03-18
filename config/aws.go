@@ -50,8 +50,8 @@ func getConfigFilePath() (string, error) {
 	return filepath, nil
 }
 
-// LoadMediaDbConfig loads the database config returns a pointer to it. It will
-// first look for configuration in a valid override filepath in the
+// LoadMediaDbConfig loads the database config and returns a pointer to it. It
+// will first look for configuration in a valid override filepath in the
 // environment variable MEDIA_DB_CONFIG_FILE. If no valid override file is
 // found, it will use the file ./.mediadb/config in the user's home directory.
 // The error will be non-nil if a valid config file cannot be found or its
