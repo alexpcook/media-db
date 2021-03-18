@@ -1,37 +1,27 @@
 package config
 
 import (
-	"fmt"
+	"log"
 	"os"
+	"path"
 	"reflect"
 	"testing"
 )
 
-func TestGetConfigFilePath(tt *testing.T) {
-	userHomeDir, err := os.UserHomeDir()
+func init() {
+	err := os.Unsetenv(getOverrideConfigFilePathEnvVarName())
 	if err != nil {
-		tt.Fatal(err)
+		log.Fatal(err)
 	}
 
-	testCases := []struct {
-		dir, file, want string
-	}{
-		{"dir1", "file1", userHomeDir + "/dir1" + "/file1"},
-		{"//dir2", "/file2/", userHomeDir + "/dir2" + "/file2"},
-		{DefaultConfigDir, DefaultConfigFile, fmt.Sprintf("%s/%s/%s", userHomeDir, DefaultConfigDir, DefaultConfigFile)},
+	defaultConfigFile, err := getConfigFilePath()
+	if err != nil && !os.IsNotExist(err) {
+		log.Fatal(err)
 	}
 
-	for i, test := range testCases {
-		tt.Run(fmt.Sprintf("case-%d", i), func(subtt *testing.T) {
-			filepath, err := getConfigFilePath(test.dir, test.file)
-			if err != nil {
-				subtt.Fatal(err)
-			}
-
-			if test.want != filepath {
-				subtt.Fatalf("want %q, got %q", test.want, filepath)
-			}
-		})
+	err = os.Remove(defaultConfigFile)
+	if err != nil && !os.IsNotExist(err) {
+		log.Fatal(err)
 	}
 }
 
@@ -40,10 +30,89 @@ func invalidFilePathTestName() string {
 }
 
 func TestLoadMediaDbConfig(tt *testing.T) {
+	userHomeDirName, err := os.UserHomeDir()
+	if err != nil {
+		tt.Fatal(err)
+	}
+
+	defaultConfigFile, err := os.Create(path.Join(userHomeDirName, getDefaultConfigDirName(), getDefaultConfigFileName()))
+	if err != nil {
+		tt.Fatal(err)
+	}
+	defer func() {
+		err = os.Remove(defaultConfigFile.Name())
+		if err != nil {
+			tt.Fatal(err)
+		}
+	}()
+
 	testCases := []struct {
 		name    string
 		json    []byte
-		config  *MediaDbConfig
+		want    *MediaDbConfig
+		isError bool
+	}{
+		{
+			"basic",
+			[]byte(`{"profile": "test-profile", "region": "us-west-1", "bucket": "test-bucket"}`),
+			&MediaDbConfig{AWSProfile: "test-profile", AWSRegion: "us-west-1", S3Bucket: "test-bucket"},
+			false,
+		},
+		{
+			"invalid-json",
+			[]byte(`{"profile: "test-profile", "region": "us-west-1", "bucket": "test-bucket"}`),
+			nil,
+			true,
+		},
+		{
+			"null-profile",
+			[]byte(`{"profile": "    ", "region": "us-west-1", "bucket": "test-bucket"}`),
+			nil,
+			true,
+		},
+		{
+			"null-region",
+			[]byte(`{"profile": "test-profile", "region": "   ", "bucket": "test-bucket"}`),
+			nil,
+			true,
+		},
+		{
+			"null-bucket",
+			[]byte(`{"profile": "test-profile", "region": "us-west-1", "bucket": ""}`),
+			nil,
+			true,
+		},
+	}
+
+	for _, test := range testCases {
+		tt.Run(test.name, func(subtt *testing.T) {
+			_, err = defaultConfigFile.Write(test.json)
+			if err != nil {
+				subtt.Fatal(err)
+			}
+
+			got, err := LoadMediaDbConfig()
+			if test.isError {
+				if err == nil {
+					subtt.Fatal("want error, got nil")
+				}
+				return
+			} else if err != nil {
+				subtt.Fatal(err)
+			}
+
+			if !reflect.DeepEqual(test.want, got) {
+				subtt.Fatalf("want %v, got %v", test.want, got)
+			}
+		})
+	}
+}
+
+func TestLoadMediaDbConfigOverride(tt *testing.T) {
+	testCases := []struct {
+		name    string
+		json    []byte
+		want    *MediaDbConfig
 		isError bool
 	}{
 		{
@@ -86,28 +155,37 @@ func TestLoadMediaDbConfig(tt *testing.T) {
 
 	for _, test := range testCases {
 		tt.Run(test.name, func(subtt *testing.T) {
-			tempConfigFile, err := os.CreateTemp("", "aws_test")
+			overrideConfigFile, err := os.CreateTemp("", "aws_test_override")
 			if err != nil {
 				subtt.Fatal(err)
 			}
 			defer func() {
-				err = os.Remove(tempConfigFile.Name())
+				err = os.Remove(overrideConfigFile.Name())
 				if err != nil {
 					subtt.Fatal(err)
 				}
 			}()
 
-			_, err = tempConfigFile.Write(test.json)
+			err = os.Setenv(getOverrideConfigFilePathEnvVarName(), overrideConfigFile.Name())
+			if test.name == invalidFilePathTestName() {
+				err = os.Setenv(getOverrideConfigFilePathEnvVarName(), "/an/invalid/config/file/path")
+			}
+			if err != nil {
+				subtt.Fatal(err)
+			}
+			defer func() {
+				err = os.Unsetenv(getOverrideConfigFilePathEnvVarName())
+				if err != nil {
+					subtt.Fatal(err)
+				}
+			}()
+
+			_, err = overrideConfigFile.Write(test.json)
 			if err != nil {
 				subtt.Fatal(err)
 			}
 
-			filepath := tempConfigFile.Name()
-			if test.name == invalidFilePathTestName() {
-				filepath = "an invalid filepath"
-			}
-
-			got, err := LoadMediaDbConfig(filepath)
+			got, err := LoadMediaDbConfig()
 			if test.isError {
 				if err == nil {
 					subtt.Fatal("want error, got nil")
@@ -117,8 +195,8 @@ func TestLoadMediaDbConfig(tt *testing.T) {
 				subtt.Fatal(err)
 			}
 
-			if !reflect.DeepEqual(test.config, got) {
-				subtt.Fatalf("want %v, got %v", test.config, got)
+			if !reflect.DeepEqual(test.want, got) {
+				subtt.Fatalf("want %v, got %v", test.want, got)
 			}
 		})
 	}

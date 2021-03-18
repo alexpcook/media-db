@@ -8,13 +8,17 @@ import (
 	"strings"
 )
 
-const (
-	// DefaultConfigDir is the default AWS configuration directory name.
-	DefaultConfigDir string = ".mediadb"
+func getDefaultConfigDirName() string {
+	return ".mediadb"
+}
 
-	// DefaultConfigFile is the default AWS configuration file name.
-	DefaultConfigFile string = "config"
-)
+func getDefaultConfigFileName() string {
+	return "config"
+}
+
+func getOverrideConfigFilePathEnvVarName() string {
+	return "MEDIA_DB_CONFIG_FILE"
+}
 
 // MediaDbConfig contains the AWS profile, region, and S3 bucket name to use
 // for interacting with the database.
@@ -24,44 +28,63 @@ type MediaDbConfig struct {
 	S3Bucket   string `json:"bucket"`
 }
 
-// getConfigFilePath returns an absolute filepath to configFileName in
-// configDirName in the user's home directory. The error will be non-nil
-// if there is a problem determining the user's home directory.
-func getConfigFilePath(configDirName, configFileName string) (string, error) {
+func getConfigFilePath() (string, error) {
+	if override, isSet := os.LookupEnv(getOverrideConfigFilePathEnvVarName()); isSet {
+		_, err := os.Stat(override)
+		if err == nil {
+			return path.Join(override), nil
+		}
+	}
+
 	userHomeDirName, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
 	}
 
-	return path.Join(userHomeDirName, configDirName, configFileName), nil
+	filepath := path.Join(userHomeDirName, getDefaultConfigDirName(), getDefaultConfigFileName())
+	_, err = os.Stat(filepath)
+	if err != nil {
+		return "", err
+	}
+
+	return filepath, nil
 }
 
-// LoadMediaDbConfig loads the AWS config from filepath and returns a pointer to it.
-// The error will be non-nil if the config file cannot be read or its JSON
-// cannot be parsed.
-func LoadMediaDbConfig(filepath string) (*MediaDbConfig, error) {
-	data, err := os.ReadFile(filepath)
+// LoadMediaDbConfig loads the database config returns a pointer to it. It will
+// first look for configuration in a valid override filepath in the
+// environment variable MEDIA_DB_CONFIG_FILE. If no valid override file is
+// found, it will use the file ./.mediadb/config in the user's home directory.
+// The error will be non-nil if a valid config file cannot be found or its
+// settings cannot be parsed.
+func LoadMediaDbConfig() (*MediaDbConfig, error) {
+	configFile, err := getConfigFilePath()
 	if err != nil {
 		return nil, err
 	}
 
-	var config MediaDbConfig
-	err = json.Unmarshal(data, &config)
+	configData, err := os.ReadFile(configFile)
 	if err != nil {
 		return nil, err
 	}
 
-	if strings.TrimSpace(config.AWSProfile) == "" {
-		return nil, fmt.Errorf("profile cannot be only space, got %q", config.AWSProfile)
+	dbConfig := MediaDbConfig{}
+	err = json.Unmarshal(configData, &dbConfig)
+	if err != nil {
+		return nil, err
 	}
 
-	if strings.TrimSpace(config.AWSRegion) == "" {
-		return nil, fmt.Errorf("region cannot be only space, got %q", config.AWSRegion)
+	trim := strings.TrimSpace
+	if trim(dbConfig.AWSProfile) == "" {
+		return nil, fmt.Errorf("profile cannot be null, got %q", dbConfig.AWSProfile)
 	}
 
-	if strings.TrimSpace(config.S3Bucket) == "" {
-		return nil, fmt.Errorf("bucket cannot be only space, got %q", config.S3Bucket)
+	if trim(dbConfig.AWSRegion) == "" {
+		return nil, fmt.Errorf("region cannot be null, got %q", dbConfig.AWSRegion)
 	}
 
-	return &config, nil
+	if trim(dbConfig.S3Bucket) == "" {
+		return nil, fmt.Errorf("bucket cannot be null, got %q", dbConfig.S3Bucket)
+	}
+
+	return &dbConfig, nil
 }
