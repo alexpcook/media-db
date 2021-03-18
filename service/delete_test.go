@@ -8,25 +8,33 @@ import (
 )
 
 func TestDelete(tt *testing.T) {
-	if testConfigFile == "" {
-		tt.Fatalf("a media db config file for testing must be supplied, got %q", testConfigFile)
+	cfg, err := config.LoadMediaDbConfig()
+	if err != nil {
+		tt.Fatal(err)
 	}
 
-	cfg, err := config.LoadMediaDbConfig()
-	handleError(err, tt)
-
 	client, err := NewMediaDbClient(cfg)
-	handleError(err, tt)
+	if err != nil {
+		tt.Fatal(err)
+	}
 
 	movie, err := schema.NewMovie("A Movie Title", "A Movie Director", 2010, "2021-02-16")
-	handleError(err, tt)
+	if err != nil {
+		tt.Fatal(err)
+	}
 
 	err = client.Delete(movie)
-	handleError(err, tt)
+	if err != nil {
+		tt.Fatal(err)
+	}
 
 	music, err := schema.NewMusic("An Album Title", "An Artist", 1980, "2020-03-16")
-	handleError(err, tt)
+	if err != nil {
+		tt.Fatal(err)
+	}
 
 	err = client.Delete(music)
-	handleError(err, tt)
+	if err != nil {
+		tt.Fatal(err)
+	}
 }

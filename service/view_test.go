@@ -7,18 +7,20 @@ import (
 )
 
 func TestView(tt *testing.T) {
-	if testConfigFile == "" {
-		tt.Fatalf("a media db config file for testing must be supplied, got %q", testConfigFile)
+	cfg, err := config.LoadMediaDbConfig()
+	if err != nil {
+		tt.Fatal(err)
 	}
 
-	cfg, err := config.LoadMediaDbConfig()
-	handleError(err, tt)
-
 	client, err := NewMediaDbClient(cfg)
-	handleError(err, tt)
+	if err != nil {
+		tt.Fatal(err)
+	}
 
 	res, err := client.View("")
-	handleError(err, tt)
+	if err != nil {
+		tt.Fatal(err)
+	}
 
 	if len(res) != 2 {
 		tt.Fatalf("expected two entries in response, got %d", len(res))

@@ -17,13 +17,11 @@ func (cl *MediaDbClient) Add(media schema.Media) error {
 	}
 
 	key := media.S3Key()
-	input := &s3.PutObjectInput{
+	_, err = cl.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket: &cl.s3Bucket,
 		Key:    &key,
 		Body:   bytes.NewReader(jsonData),
-	}
-
-	_, err = cl.s3Client.PutObject(context.TODO(), input)
+	})
 	if err != nil {
 		return err
 	}
