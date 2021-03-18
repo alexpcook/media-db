@@ -16,7 +16,7 @@ func TestNewMediaDbClient(tt *testing.T) {
 		tt.Fatalf("a media db config file for testing must be supplied, got %q", *testConfigFilepath)
 	}
 
-	cfg, err := config.LoadMediaDbConfig(*testConfigFilepath)
+	cfg, err := config.LoadMediaDbConfig()
 	if err != nil {
 		tt.Fatal(err)
 	}

@@ -18,7 +18,7 @@ func TestAdd(tt *testing.T) {
 		tt.Fatalf("a media db config file for testing must be supplied, got %q", *testConfigFilepath)
 	}
 
-	cfg, err := config.LoadMediaDbConfig(*testConfigFilepath)
+	cfg, err := config.LoadMediaDbConfig()
 	handleError(err, tt)
 
 	client, err := NewMediaDbClient(cfg)
