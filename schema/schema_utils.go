@@ -7,10 +7,16 @@ import (
 	"time"
 )
 
-// StringToUnixTime converts a string s of format 'yyyy-mm-dd' to a Unix timestamp.
-// The time of the returned value is always 00:00:00 UTC.
-// If the string cannot be parsed to a valid date, a non-nil error is returned.
+// StringToUnixTime converts a string s of format 'yyyy-mm-dd' to a Unix
+// timestamp. The time of the returned value is always 00:00:00 UTC. If
+// the string cannot be parsed to a valid date, a non-nil error is returned.
+// If s is the empty string "", a Unix time of zero (Jan 1 1970 UTC) is
+// returned.
 func StringToUnixTime(s string) (int64, error) {
+	if s == "" {
+		return time.Unix(0, 0).Unix(), nil
+	}
+
 	strFields := strings.SplitN(s, "-", 3)
 	if numFields := len(strFields); numFields != 3 {
 		return 0, fmt.Errorf("length of date string is not 3, got %d", numFields)

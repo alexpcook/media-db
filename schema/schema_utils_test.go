@@ -11,6 +11,7 @@ func TestStringToUnixTime(tt *testing.T) {
 		input   string
 		isError bool
 	}{
+		{"", false},
 		{"2006-01-02", false},
 		{"2021-03-14", false},
 		{"1990-06-12", false},
