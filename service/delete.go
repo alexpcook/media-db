@@ -11,7 +11,8 @@ func (cl *MediaDbClient) Delete(media schema.Media) error {
 	key := media.S3Key()
 
 	_, err := cl.s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
-		Key: &key,
+		Bucket: &cl.s3Bucket,
+		Key:    &key,
 	})
 	if err != nil {
 		return err
