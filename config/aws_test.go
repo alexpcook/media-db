@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func init() {
+func preTestSetup() {
 	err := os.Unsetenv(GetOverrideConfigFileEnvVar())
 	if err != nil {
 		log.Fatal(err)
@@ -28,6 +28,8 @@ func invalidFilePathTestName() string {
 }
 
 func TestLoadMediaDbConfig(tt *testing.T) {
+	preTestSetup()
+
 	defaultConfigFile, err := os.Create(GetDefaultConfigFile())
 	if err != nil {
 		tt.Fatal(err)
@@ -102,6 +104,8 @@ func TestLoadMediaDbConfig(tt *testing.T) {
 }
 
 func TestLoadMediaDbConfigOverride(tt *testing.T) {
+	preTestSetup()
+
 	testCases := []struct {
 		name    string
 		json    []byte
