@@ -17,9 +17,9 @@ type Movie struct {
 	DateWatched int64  `json:"date"`
 }
 
-// S3Key returns the unique S3 object key for storage in the database.
+// Key returns the unique object key for storage in the database.
 // For example, /media/movie/6ba7b810-9dad-11d1-80b4-00c04fd430c8
-func (m Movie) S3Key() string {
+func (m Movie) Key() string {
 	return strings.Join([]string{
 		GetMediaBaseKey(),
 		GetMediaTypeKey(m),

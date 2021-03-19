@@ -80,7 +80,7 @@ func TestNewMusic(tt *testing.T) {
 			}
 
 			wantKey := "music" + "/" + fmt.Sprint(music.YearMade) + "/" + base64.URLEncoding.EncodeToString([]byte(music.Title))
-			if gotKey := music.S3Key(); wantKey != gotKey {
+			if gotKey := music.Key(); wantKey != gotKey {
 				subtt.Fatalf("s3 key error: want %v, got %v", wantKey, gotKey)
 			}
 		})

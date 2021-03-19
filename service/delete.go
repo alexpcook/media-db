@@ -8,7 +8,7 @@ import (
 )
 
 func (cl *MediaDbClient) Delete(media schema.Media) error {
-	key := media.S3Key()
+	key := media.Key()
 
 	_, err := cl.s3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
 		Bucket: &cl.s3Bucket,

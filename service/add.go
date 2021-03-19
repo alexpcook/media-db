@@ -16,7 +16,7 @@ func (cl *MediaDbClient) Add(media schema.Media) error {
 		return err
 	}
 
-	key := media.S3Key()
+	key := media.Key()
 	_, err = cl.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket: &cl.s3Bucket,
 		Key:    &key,
