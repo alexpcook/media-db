@@ -1,14 +1,16 @@
 package schema
 
 import (
-	"encoding/base64"
 	"fmt"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 // Movie contains information about a single film.
 // DateWatched is a Unix timestamp.
 type Movie struct {
+	ID          string `json:"id"`
 	Title       string `json:"title"`
 	Director    string `json:"director"`
 	YearMade    int    `json:"year"`
@@ -16,15 +18,9 @@ type Movie struct {
 }
 
 // S3Key returns the unique S3 object key for storage in the database.
-// For example, /movie/2021/QSBNb3ZpZQ==
+// For example, /media/movie/6ba7b810-9dad-11d1-80b4-00c04fd430c8
 func (m Movie) S3Key() string {
-	baseDir := "movie"
-
-	return strings.Join([]string{
-		baseDir,
-		fmt.Sprint(m.YearMade),
-		base64.URLEncoding.EncodeToString([]byte(m.Title)),
-	}, "/")
+	return "media/movie/" + m.ID
 }
 
 // NewMovie validates the given inputs and returns a pointer to a Movie type.
@@ -53,6 +49,7 @@ func NewMovie(title, director string, yearMade int, dateWatched string) (*Movie,
 	}
 
 	return &Movie{
+		ID:          uuid.NewString(),
 		Title:       title,
 		Director:    director,
 		YearMade:    yearMade,
