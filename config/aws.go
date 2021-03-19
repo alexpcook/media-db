@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -52,6 +53,67 @@ type MediaDbConfig struct {
 	AWSProfile string `json:"profile"`
 	AWSRegion  string `json:"region"`
 	S3Bucket   string `json:"bucket"`
+}
+
+// NewMediaDbConfig returns a pointer based on the given AWS profile,
+// AWS region, and S3 bucket.
+func NewMediaDbConfig(awsProfile, awsRegion, s3Bucket string) (*MediaDbConfig, error) {
+	trim := strings.TrimSpace
+
+	awsProfile = trim(awsProfile)
+	if awsProfile == "" {
+		return nil, fmt.Errorf("awsProfile cannot be null, got %q", awsProfile)
+	}
+
+	awsRegion = trim(awsRegion)
+	if awsRegion == "" {
+		return nil, fmt.Errorf("awsRegion cannot be null, got %q", awsRegion)
+	}
+
+	s3Bucket = trim(s3Bucket)
+	if s3Bucket == "" {
+		return nil, fmt.Errorf("s3Bucket cannot be null, got %q", s3Bucket)
+	}
+
+	return &MediaDbConfig{
+		AWSProfile: awsProfile,
+		AWSRegion:  awsRegion,
+		S3Bucket:   s3Bucket,
+	}, nil
+}
+
+// Save creates the MediaDbConfig as JSON in the
+// current configuration file location.
+func (cfg *MediaDbConfig) Save() error {
+	configFile := GetCurrentConfigFile()
+
+	configFileNew, err := os.CreateTemp("", "media_db_config")
+	if err != nil {
+		return err
+	}
+	defer func() {
+		err = os.Remove(configFileNew.Name())
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			log.Fatal(err)
+		}
+	}()
+
+	configData, err := json.Marshal(*cfg)
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(configFileNew.Name(), configData, 0600)
+	if err != nil {
+		return err
+	}
+
+	err = os.Rename(configFileNew.Name(), configFile)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // LoadMediaDbConfig loads the database config and returns a pointer to it. It

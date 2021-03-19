@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"path"
 	"reflect"
 	"testing"
 )
@@ -25,6 +26,146 @@ func preTestSetup() {
 
 func invalidFilePathTestName() string {
 	return "invalid-filepath"
+}
+
+func TestGetDefaultConfigFile(tt *testing.T) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		tt.Fatal(err)
+	}
+
+	want := path.Join(homeDir, ".mediadb", "config")
+
+	if got := GetDefaultConfigFile(); want != got {
+		tt.Fatalf("want %q, got %q", want, got)
+	}
+}
+
+func TestGetOverrideConfigFile(tt *testing.T) {
+	testCases := []string{path.Join("some", "override", "file"), ""}
+
+	for _, want := range testCases {
+		var err error
+
+		if want != "" {
+			err = os.Setenv(GetOverrideConfigFileEnvVar(), want)
+		} else {
+			err = os.Unsetenv(GetOverrideConfigFileEnvVar())
+		}
+
+		if err != nil {
+			tt.Fatal(err)
+		}
+
+		if got := GetOverrideConfigFile(); want != got {
+			tt.Fatalf("want %q, got %q", want, got)
+		}
+	}
+}
+
+func TestGetOverrideConfigFileEnvVar(tt *testing.T) {
+	want := "MEDIA_DB_CONFIG_FILE"
+
+	if got := GetOverrideConfigFileEnvVar(); want != got {
+		tt.Fatalf("want %q, got %q", want, got)
+	}
+}
+
+func TestGetCurrentConfigFile(tt *testing.T) {
+	testCases := []string{path.Join("some", "override", "file"), ""}
+
+	for _, file := range testCases {
+		var err error
+		var want string
+
+		if file != "" {
+			err = os.Setenv(GetOverrideConfigFileEnvVar(), file)
+			want = file
+		} else {
+			err = os.Unsetenv(GetOverrideConfigFileEnvVar())
+			want = GetDefaultConfigFile()
+		}
+
+		if err != nil {
+			tt.Fatal(err)
+		}
+
+		if got := GetCurrentConfigFile(); want != got {
+			tt.Fatalf("want %q, got %q", want, got)
+		}
+	}
+}
+
+func TestNewMediaDbConfig(tt *testing.T) {
+	testCases := []struct {
+		name                    string
+		profile, region, bucket string
+		want                    *MediaDbConfig
+		isError                 bool
+	}{
+		{
+			"valid",
+			"aws-profile", "aws-region", "aws-bucket",
+			&MediaDbConfig{"aws-profile", "aws-region", "aws-bucket"},
+			false,
+		},
+		{
+			"null-profile",
+			"\t \n", "aws-region", "aws-bucket",
+			nil,
+			true,
+		},
+		{
+			"null-region",
+			"aws-profile", "    ", "aws-bucket",
+			nil,
+			true,
+		},
+		{
+			"null-bucket",
+			"aws-profile", "aws-region", "",
+			nil,
+			true,
+		},
+	}
+
+	for _, test := range testCases {
+		tt.Run(test.name, func(subtt *testing.T) {
+			got, err := NewMediaDbConfig(test.profile, test.region, test.bucket)
+
+			if test.isError {
+				if err == nil {
+					subtt.Fatal("want error, got nil")
+				}
+				return
+			} else if err != nil {
+				subtt.Fatal(err)
+			}
+
+			if !reflect.DeepEqual(test.want, got) {
+				subtt.Fatalf("want %v, got %v", test.want, got)
+			}
+		})
+	}
+}
+
+func TestMediaDbConfigSave(tt *testing.T) {
+	defer func() {
+		err := os.Remove(GetCurrentConfigFile())
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			tt.Fatal(err)
+		}
+	}()
+
+	cfg, err := NewMediaDbConfig("profile", "region", "bucket")
+	if err != nil {
+		tt.Fatal(err)
+	}
+
+	err = cfg.Save()
+	if err != nil {
+		tt.Fatal(err)
+	}
 }
 
 func TestLoadMediaDbConfig(tt *testing.T) {
