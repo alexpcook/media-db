@@ -1,10 +1,11 @@
 package schema
 
 import (
-	"encoding/base64"
-	"fmt"
 	"reflect"
+	"strings"
 	"testing"
+
+	"github.com/google/uuid"
 )
 
 type newMusicInput struct {
@@ -52,9 +53,14 @@ func TestNewMusic(tt *testing.T) {
 		},
 	}
 
+	testUUID := uuid.NewString()
+
 	for _, test := range testCases {
 		tt.Run(test.name, func(subtt *testing.T) {
 			music, err := NewMusic(test.input.title, test.input.artist, test.input.year, test.input.date)
+			if music != nil {
+				music.ID = testUUID // force the UUID to be constant for testing purposes
+			}
 
 			if test.output.isError {
 				if err == nil {
@@ -70,6 +76,7 @@ func TestNewMusic(tt *testing.T) {
 				subtt.Fatal(err)
 			}
 
+			test.output.music.ID = testUUID
 			test.output.music.Title = test.input.title
 			test.output.music.Artist = test.input.artist
 			test.output.music.YearMade = test.input.year
@@ -79,7 +86,7 @@ func TestNewMusic(tt *testing.T) {
 				subtt.Fatalf("want %v, got %v", test.output.music, music)
 			}
 
-			wantKey := "music" + "/" + fmt.Sprint(music.YearMade) + "/" + base64.URLEncoding.EncodeToString([]byte(music.Title))
+			wantKey := strings.Join([]string{GetMediaBaseKey(), GetMediaTypeKey(*music), testUUID}, "/")
 			if gotKey := music.Key(); wantKey != gotKey {
 				subtt.Fatalf("s3 key error: want %v, got %v", wantKey, gotKey)
 			}
