@@ -34,6 +34,15 @@ func TestView(tt *testing.T) {
 		}
 	}()
 
+	// Simulate a failed list bucket call.
+	originalBucket := client.s3Bucket
+	client.s3Bucket = "this-is-an-invalid-bucket-name"
+	_, err = client.View("")
+	if err == nil {
+		tt.Fatal("want error, got nil")
+	}
+	client.s3Bucket = originalBucket
+
 	res, err := client.View("")
 	if err != nil {
 		tt.Fatal(err)
