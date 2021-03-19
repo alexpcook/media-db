@@ -33,10 +33,3 @@ func preTestSetup() {
 		log.Fatal(err)
 	}
 }
-
-func postTestTeardown() {
-	err := os.Unsetenv(config.GetOverrideConfigFileEnvVar())
-	if err != nil {
-		log.Fatal(err)
-	}
-}

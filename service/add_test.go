@@ -49,4 +49,15 @@ func TestAdd(tt *testing.T) {
 			tt.Fatal(err)
 		}
 	}()
+
+	// Mock a failed communication with the S3 bucket.
+	originalS3Bucket := client.s3Bucket
+	client.s3Bucket = "this-is-an-invalid-bucket-name"
+	err = client.Add(music)
+	if err == nil {
+		tt.Fatal("want error, got nil")
+	}
+	defer func() {
+		client.s3Bucket = originalS3Bucket
+	}()
 }

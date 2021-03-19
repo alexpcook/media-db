@@ -9,10 +9,7 @@ import (
 
 func TestMain(m *testing.M) {
 	preTestSetup()
-	code := m.Run()
-
-	postTestTeardown()
-	os.Exit(code)
+	os.Exit(m.Run())
 }
 
 func TestNewMediaDbClient(tt *testing.T) {
