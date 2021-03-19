@@ -20,7 +20,11 @@ type Music struct {
 // S3Key returns the unique S3 object key for storage in the database.
 // For example, /media/music/6ba7b810-9dad-11d1-80b4-00c04fd430c8
 func (m Music) S3Key() string {
-	return "media/music/" + m.ID
+	return strings.Join([]string{
+		GetMediaBaseKey(),
+		GetMediaTypeKey(m),
+		m.ID,
+	}, "/")
 }
 
 // NewMusic validates the given inputs and returns a pointer to a Music type.

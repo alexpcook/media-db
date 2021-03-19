@@ -20,7 +20,11 @@ type Movie struct {
 // S3Key returns the unique S3 object key for storage in the database.
 // For example, /media/movie/6ba7b810-9dad-11d1-80b4-00c04fd430c8
 func (m Movie) S3Key() string {
-	return "media/movie/" + m.ID
+	return strings.Join([]string{
+		GetMediaBaseKey(),
+		GetMediaTypeKey(m),
+		m.ID,
+	}, "/")
 }
 
 // NewMovie validates the given inputs and returns a pointer to a Movie type.

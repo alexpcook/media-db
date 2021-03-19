@@ -7,6 +7,29 @@ import (
 	"time"
 )
 
+// GetMediaBaseKey returns the base path to use
+// for media stored in the database.
+func GetMediaBaseKey() string {
+	return "media"
+}
+
+// GetMediaTypeKey returns the path to use under GetMediaBaseKey
+// for each type of media in the database.
+func GetMediaTypeKey(media Media) string {
+	var key string
+
+	switch media.(type) {
+	case Movie:
+		key = "movie"
+	case Music:
+		key = "music"
+	default:
+		key = "unknown"
+	}
+
+	return key
+}
+
 // StringToUnixTime converts a string s of format 'yyyy-mm-dd' to a Unix
 // timestamp. The time of the returned value is always 00:00:00 UTC. If
 // the string cannot be parsed to a valid date, a non-nil error is returned.
