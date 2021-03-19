@@ -6,6 +6,36 @@ import (
 	"time"
 )
 
+func TestGetMediaBaseKey(tt *testing.T) {
+	want := "media"
+
+	if got := GetMediaBaseKey(); want != got {
+		tt.Fatalf("want %q, got %q", want, got)
+	}
+}
+
+func TestGetMediaTypeKey(tt *testing.T) {
+	mediaTypes := []Media{Movie{}, Music{}, nil}
+
+	for _, media := range mediaTypes {
+		got := GetMediaTypeKey(media)
+
+		var want string
+		switch media.(type) {
+		case Movie:
+			want = "movie"
+		case Music:
+			want = "music"
+		default:
+			want = "unknown"
+		}
+
+		if want != got {
+			tt.Fatalf("want %q, got %q", want, got)
+		}
+	}
+}
+
 func TestStringToUnixTime(tt *testing.T) {
 	testCases := []struct {
 		input   string
