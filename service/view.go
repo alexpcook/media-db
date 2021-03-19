@@ -44,15 +44,15 @@ func (cl *MediaDbClient) View(filter string) ([]schema.Media, error) {
 			}
 		}
 
-		switch strings.Split(*obj.Key, "/")[0] {
-		case "movie":
+		switch strings.Split(*obj.Key, "/")[1] {
+		case schema.GetMediaTypeKey(schema.Movie{}):
 			media := schema.Movie{}
 			err = json.Unmarshal(jsonData, &media)
 			if err != nil {
 				return nil, err
 			}
 			mediaRes = append(mediaRes, media)
-		case "music":
+		case schema.GetMediaTypeKey(schema.Music{}):
 			media := schema.Music{}
 			err = json.Unmarshal(jsonData, &media)
 			if err != nil {
