@@ -55,4 +55,22 @@ func TestUpdate(tt *testing.T) {
 	if err != nil {
 		tt.Fatal(err)
 	}
+
+	// Validate that one film is now in the database.
+	entries, err = client.Read("")
+	if err != nil {
+		tt.Fatal(err)
+	}
+	if len(entries) != 1 {
+		tt.Fatalf("want 1 entry in database, got %d", len(entries))
+	}
+
+	for _, entry := range entries {
+		switch entry.(type) {
+		case schema.Movie:
+			break
+		default:
+			tt.Fatalf("expected movie type, got %T", entry)
+		}
+	}
 }
