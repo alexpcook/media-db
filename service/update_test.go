@@ -29,6 +29,15 @@ func TestUpdate(tt *testing.T) {
 		tt.Fatal("want error, got nil")
 	}
 
+	// Ensure that the database is empty.
+	entries, err := client.Read("")
+	if err != nil {
+		tt.Fatal(err)
+	}
+	if len(entries) != 0 {
+		tt.Fatalf("want 0 entries in database, got %d", len(entries))
+	}
+
 	err = client.Create(movie)
 	if err != nil {
 		tt.Fatal(err)
