@@ -29,6 +29,7 @@ func getReadFilter(id string, mediaType schema.Media) string {
 // there is no filtering applied. If id is not the empty string, mediaType
 // should match the type of media corresponding to that id. If id is the empty
 // string and mediaType is not nil, all media of that type will be returned.
+// It returns a slice of media entries upon success and a non-nil error upon failure.
 func (cl *MediaDbClient) Read(id string, mediaType schema.Media) ([]schema.Media, error) {
 	filter := getReadFilter(id, mediaType)
 
