@@ -37,13 +37,13 @@ func TestRead(tt *testing.T) {
 	// Simulate a failed list bucket call.
 	originalBucket := client.s3Bucket
 	client.s3Bucket = "this-is-an-invalid-bucket-name"
-	_, err = client.Read("")
+	_, err = client.Read("", nil)
 	if err == nil {
 		tt.Fatal("want error, got nil")
 	}
 	client.s3Bucket = originalBucket
 
-	res, err := client.Read("")
+	res, err := client.Read("", nil)
 	if err != nil {
 		tt.Fatal(err)
 	}
@@ -53,7 +53,7 @@ func TestRead(tt *testing.T) {
 	}
 
 	// Test filtering everything in the bucket (since there's only one movie).
-	res, err = client.Read(schema.GetBaseKeyFromMediaType(schema.Music{}))
+	res, err = client.Read("", schema.Music{})
 	if err != nil {
 		tt.Fatal(err)
 	}
@@ -79,7 +79,17 @@ func TestRead(tt *testing.T) {
 	}()
 
 	// There should now be one piece of music in the bucket.
-	res, err = client.Read(schema.GetBaseKeyFromMediaType(schema.Music{}))
+	res, err = client.Read("", schema.Music{})
+	if err != nil {
+		tt.Fatal(err)
+	}
+
+	if len(res) != 1 {
+		tt.Fatalf("expected one entry in response, got %d", len(res))
+	}
+
+	// Filter on the exact ID of the piece of music.
+	res, err = client.Read(music.ID, schema.Music{})
 	if err != nil {
 		tt.Fatal(err)
 	}

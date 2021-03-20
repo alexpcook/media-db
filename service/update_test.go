@@ -30,7 +30,7 @@ func TestUpdate(tt *testing.T) {
 	}
 
 	// Ensure that the database is empty.
-	entries, err := client.Read("")
+	entries, err := client.Read("", nil)
 	if err != nil {
 		tt.Fatal(err)
 	}
@@ -57,7 +57,7 @@ func TestUpdate(tt *testing.T) {
 	}
 
 	// Validate that one film is now in the database.
-	entries, err = client.Read("")
+	entries, err = client.Read("", nil)
 	if err != nil {
 		tt.Fatal(err)
 	}

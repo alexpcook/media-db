@@ -5,14 +5,33 @@ import (
 	"encoding/json"
 	"io"
 	"log"
+	"strings"
 
 	"github.com/alexpcook/media-db-console/schema"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
+func getReadFilter(id string, mediaType schema.Media) string {
+	if id == "" && mediaType == nil {
+		return ""
+	}
+
+	baseKey := schema.GetBaseKeyFromMediaType(mediaType)
+	if id != "" {
+		return strings.Join([]string{baseKey, id}, "/")
+	}
+
+	return baseKey
+}
+
 // Read retrieves the media entries from the database that match the
-// specified filters.
-func (cl *MediaDbClient) Read(filter string) ([]schema.Media, error) {
+// specified filters. If id is the empty string "" and mediaType is nil,
+// there is no filtering applied. If id is not the empty string, mediaType
+// should match the type of media corresponding to that id. If id is the empty
+// string and mediaType is not nil, all media of that type will be returned.
+func (cl *MediaDbClient) Read(id string, mediaType schema.Media) ([]schema.Media, error) {
+	filter := getReadFilter(id, mediaType)
+
 	listObjsRes, err := cl.s3Client.ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
 		Bucket: &cl.s3Bucket,
 		Prefix: &filter,
