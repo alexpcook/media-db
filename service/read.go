@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/alexpcook/media-db-console/schema"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -44,21 +44,26 @@ func (cl *MediaDbClient) Read(filter string) ([]schema.Media, error) {
 			}
 		}
 
-		switch strings.Split(*obj.Key, "/")[1] {
-		case schema.GetMediaTypeKey(schema.Movie{}):
-			media := schema.Movie{}
-			err = json.Unmarshal(jsonData, &media)
+		media, err := schema.GetMediaTypeFromKey(*obj.Key)
+		if err != nil {
+			log.Println(err)
+		}
+
+		switch media.(type) {
+		case schema.Movie:
+			movie := schema.Movie{}
+			err = json.Unmarshal(jsonData, &movie)
 			if err != nil {
 				return nil, err
 			}
-			mediaRes = append(mediaRes, media)
-		case schema.GetMediaTypeKey(schema.Music{}):
-			media := schema.Music{}
-			err = json.Unmarshal(jsonData, &media)
+			mediaRes = append(mediaRes, movie)
+		case schema.Music:
+			music := schema.Music{}
+			err = json.Unmarshal(jsonData, &music)
 			if err != nil {
 				return nil, err
 			}
-			mediaRes = append(mediaRes, media)
+			mediaRes = append(mediaRes, music)
 		}
 	}
 

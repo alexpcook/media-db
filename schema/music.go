@@ -20,11 +20,7 @@ type Music struct {
 // Key returns the unique object key for storage in the database.
 // For example, /media/music/6ba7b810-9dad-11d1-80b4-00c04fd430c8
 func (m Music) Key() string {
-	return strings.Join([]string{
-		GetMediaBaseKey(),
-		GetMediaTypeKey(m),
-		m.ID,
-	}, "/")
+	return strings.Join([]string{GetBaseKeyFromMediaType(m), m.ID}, "/")
 }
 
 // NewMusic validates the given inputs and returns a pointer to a Music type.

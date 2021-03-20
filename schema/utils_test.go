@@ -2,36 +2,55 @@ package schema
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-func TestGetMediaBaseKey(tt *testing.T) {
-	want := "media"
+func TestGetBaseKeyFromMediaType(tt *testing.T) {
+	testCases := []struct {
+		media Media
+		want  string
+	}{
+		{Movie{}, getMediaKey() + "/" + getMovieKey()},
+		{Music{}, getMediaKey() + "/" + getMusicKey()},
+		{nil, getMediaKey() + "/" + getUnknownKey()},
+	}
 
-	if got := GetMediaBaseKey(); want != got {
-		tt.Fatalf("want %q, got %q", want, got)
+	for _, test := range testCases {
+		if got := GetBaseKeyFromMediaType(test.media); test.want != got {
+			tt.Fatalf("for type %T, want %s, got %s", test.media, test.want, got)
+		}
 	}
 }
 
-func TestGetMediaTypeKey(tt *testing.T) {
-	mediaTypes := []Media{Movie{}, Music{}, nil}
+func TestGetMediaTypeFromKey(tt *testing.T) {
+	testCases := []struct {
+		key     string
+		want    Media
+		isError bool
+	}{
+		{getMediaKey() + "/" + getMovieKey() + "/" + uuid.NewString(), Movie{}, false},
+		{getMediaKey() + "/" + getMusicKey() + "/" + uuid.NewString(), Music{}, false},
+		{getMediaKey() + "/" + getUnknownKey() + "/" + uuid.NewString(), nil, true},
+		{uuid.NewString(), nil, true},
+	}
 
-	for _, media := range mediaTypes {
-		got := GetMediaTypeKey(media)
+	for _, test := range testCases {
+		got, err := GetMediaTypeFromKey(test.key)
 
-		var want string
-		switch media.(type) {
-		case Movie:
-			want = "movie"
-		case Music:
-			want = "music"
-		default:
-			want = "unknown"
+		if test.isError {
+			if err == nil {
+				tt.Fatal("want error, got nil")
+			}
+		} else if err != nil {
+			tt.Fatal(err)
 		}
 
-		if want != got {
-			tt.Fatalf("want %q, got %q", want, got)
+		if !reflect.DeepEqual(test.want, got) {
+			tt.Fatalf("want %v, got %v", test.want, got)
 		}
 	}
 }

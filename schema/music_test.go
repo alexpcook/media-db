@@ -86,7 +86,7 @@ func TestNewMusic(tt *testing.T) {
 				subtt.Fatalf("want %v, got %v", test.output.music, music)
 			}
 
-			wantKey := strings.Join([]string{GetMediaBaseKey(), GetMediaTypeKey(*music), testUUID}, "/")
+			wantKey := strings.Join([]string{GetBaseKeyFromMediaType(*music), testUUID}, "/")
 			if gotKey := music.Key(); wantKey != gotKey {
 				subtt.Fatalf("s3 key error: want %v, got %v", wantKey, gotKey)
 			}

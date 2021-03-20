@@ -7,7 +7,7 @@ import (
 	"github.com/alexpcook/media-db-console/schema"
 )
 
-func TestView(tt *testing.T) {
+func TestRead(tt *testing.T) {
 	cfg, err := config.LoadMediaDbConfig()
 	if err != nil {
 		tt.Fatal(err)
@@ -53,7 +53,7 @@ func TestView(tt *testing.T) {
 	}
 
 	// Test filtering everything in the bucket (since there's only one movie).
-	res, err = client.Read(schema.GetMediaBaseKey() + "/" + schema.GetMediaTypeKey(schema.Music{}))
+	res, err = client.Read(schema.GetBaseKeyFromMediaType(schema.Music{}))
 	if err != nil {
 		tt.Fatal(err)
 	}
@@ -79,7 +79,7 @@ func TestView(tt *testing.T) {
 	}()
 
 	// There should now be one piece of music in the bucket.
-	res, err = client.Read(schema.GetMediaBaseKey() + "/" + schema.GetMediaTypeKey(schema.Music{}))
+	res, err = client.Read(schema.GetBaseKeyFromMediaType(schema.Music{}))
 	if err != nil {
 		tt.Fatal(err)
 	}
