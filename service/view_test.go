@@ -23,7 +23,7 @@ func TestView(tt *testing.T) {
 		tt.Fatal(err)
 	}
 
-	err = client.Add(movie)
+	err = client.Create(movie)
 	if err != nil {
 		tt.Fatal(err)
 	}
@@ -67,7 +67,7 @@ func TestView(tt *testing.T) {
 		tt.Fatal(err)
 	}
 
-	err = client.Add(music)
+	err = client.Create(music)
 	if err != nil {
 		tt.Fatal(err)
 	}

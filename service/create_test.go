@@ -7,7 +7,7 @@ import (
 	"github.com/alexpcook/media-db-console/schema"
 )
 
-func TestAdd(tt *testing.T) {
+func TestCreate(tt *testing.T) {
 	cfg, err := config.LoadMediaDbConfig()
 	if err != nil {
 		tt.Fatal(err)
@@ -23,7 +23,7 @@ func TestAdd(tt *testing.T) {
 		tt.Fatal(err)
 	}
 
-	err = client.Add(movie)
+	err = client.Create(movie)
 	if err != nil {
 		tt.Fatal(err)
 	}
@@ -39,7 +39,7 @@ func TestAdd(tt *testing.T) {
 		tt.Fatal(err)
 	}
 
-	err = client.Add(music)
+	err = client.Create(music)
 	if err != nil {
 		tt.Fatal(err)
 	}
@@ -53,7 +53,7 @@ func TestAdd(tt *testing.T) {
 	// Mock a failed communication with the S3 bucket.
 	originalS3Bucket := client.s3Bucket
 	client.s3Bucket = "this-is-an-invalid-bucket-name"
-	err = client.Add(music)
+	err = client.Create(music)
 	if err == nil {
 		tt.Fatal("want error, got nil")
 	}

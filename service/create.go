@@ -9,8 +9,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-// Add creates or updates a single S3 object in the database.
-func (cl *MediaDbClient) Add(media schema.Media) error {
+// Create makes a single new media object in the database.
+// It returns a non-nil error if the object cannot be added.
+func (cl *MediaDbClient) Create(media schema.Media) error {
 	jsonData, err := json.Marshal(media)
 	if err != nil {
 		return err
