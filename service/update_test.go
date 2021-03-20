@@ -43,7 +43,7 @@ func TestUpdate(tt *testing.T) {
 		tt.Fatal(err)
 	}
 	defer func() {
-		err = client.Delete(movie)
+		err = client.Delete(movie.ID, *movie)
 		if err != nil {
 			tt.Fatal(err)
 		}

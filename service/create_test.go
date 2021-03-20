@@ -28,7 +28,7 @@ func TestCreate(tt *testing.T) {
 		tt.Fatal(err)
 	}
 	defer func() {
-		err = client.Delete(movie)
+		err = client.Delete(movie.ID, *movie)
 		if err != nil {
 			tt.Fatal(err)
 		}
@@ -44,7 +44,7 @@ func TestCreate(tt *testing.T) {
 		tt.Fatal(err)
 	}
 	defer func() {
-		err = client.Delete(music)
+		err = client.Delete(music.ID, *music)
 		if err != nil {
 			tt.Fatal(err)
 		}

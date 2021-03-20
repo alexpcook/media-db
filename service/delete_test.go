@@ -26,7 +26,7 @@ func TestDelete(tt *testing.T) {
 	}
 
 	client.s3Bucket = "this-is-an-invalid-bucket-name"
-	err = client.Delete(movie)
+	err = client.Delete(movie.ID, *movie)
 	if err == nil {
 		tt.Fatal("want error, got nil")
 	}
