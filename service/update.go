@@ -12,8 +12,8 @@ import (
 
 // Update changes a single existing media object in the database.
 // It returns a non-nil error if the object cannot be updated.
-func (cl *MediaDbClient) Update(id string, media schema.Media) error {
-	objKey := strings.Join([]string{schema.GetBaseKeyFromMediaType(media), id}, "/")
+func (cl *MediaDbClient) Update(id string, newMedia schema.Media) error {
+	objKey := strings.Join([]string{schema.GetBaseKeyFromMediaType(newMedia), id}, "/")
 
 	// Validate that the object exists (don't create it if it doesn't).
 	_, err := cl.s3Client.HeadObject(context.TODO(), &s3.HeadObjectInput{
@@ -24,7 +24,7 @@ func (cl *MediaDbClient) Update(id string, media schema.Media) error {
 		return err
 	}
 
-	jsonData, err := json.Marshal(media)
+	jsonData, err := json.Marshal(newMedia)
 	if err != nil {
 		return err
 	}
