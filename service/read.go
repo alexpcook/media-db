@@ -10,9 +10,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-// View retrieves media entries from the S3 bucket with keys that match
-// the specified filter.
-func (cl *MediaDbClient) View(filter string) ([]schema.Media, error) {
+// Read retrieves the media entries from the database that match the
+// specified filters.
+func (cl *MediaDbClient) Read(filter string) ([]schema.Media, error) {
 	listObjsRes, err := cl.s3Client.ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
 		Bucket: &cl.s3Bucket,
 		Prefix: &filter,
