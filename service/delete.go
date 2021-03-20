@@ -7,6 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
+// Delete removes the given media from the database. It returns a non-nil
+// error if the entry cannot be deleted.
 func (cl *MediaDbClient) Delete(media schema.Media) error {
 	key := media.Key()
 
