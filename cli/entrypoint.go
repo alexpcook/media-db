@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -16,15 +17,19 @@ var (
 	StderrLogger *log.Logger = log.New(os.Stderr, "", 0)
 )
 
-func init() {
+func InitDb() {
 	MediaDbConfig, err := config.LoadMediaDbConfig()
 	if err != nil {
-		StderrLogger.Fatal(err)
+		StderrLogger.Fatal(fmt.Sprintf(`%s
+		
+run 'mdb setup' to fix the configuration issue`, err.Error()))
 	}
 
 	MediaDbClient, err = service.NewMediaDbClient(MediaDbConfig)
 	if err != nil {
-		StderrLogger.Fatal(err)
+		StderrLogger.Fatal(fmt.Sprintf(`%s
+		
+run 'mdb setup' to fix the configuration issue`, err.Error()))
 	}
 }
 

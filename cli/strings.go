@@ -5,6 +5,10 @@ import (
 	"strings"
 )
 
+func SetupCmdName() string {
+	return "setup"
+}
+
 func CreateCmdName() string {
 	return "create"
 }
@@ -37,6 +41,7 @@ func GetCLIHelpText() string {
 	return fmt.Sprintf(`usage: mdb <command> [%s] [<flag>...]
 
 where <command> is one of:
+  setup		Configure the database connection to AWS
   create	Create an entry in the database
   read		Read entries from the database
   update	Update an entry in the database
