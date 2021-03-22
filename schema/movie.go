@@ -3,6 +3,7 @@ package schema
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -21,6 +22,15 @@ type Movie struct {
 // For example, /media/movie/6ba7b810-9dad-11d1-80b4-00c04fd430c8
 func (m Movie) Key() string {
 	return strings.Join([]string{GetBaseKeyFromMediaType(m), m.ID}, "/")
+}
+
+// String provides a standard interface to print Movie to output.
+func (m Movie) String() string {
+	return fmt.Sprintf(`id: %s
+  title:    %s
+  director: %s
+  year:     %d
+  date:	    %s`, m.ID, m.Title, m.Director, m.YearMade, time.Unix(m.DateWatched, 0).Format("2006-01-02"))
 }
 
 // NewMovie validates the given inputs and returns a pointer to a Movie type.

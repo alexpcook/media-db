@@ -3,6 +3,7 @@ package schema
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -21,6 +22,15 @@ type Music struct {
 // For example, /media/music/6ba7b810-9dad-11d1-80b4-00c04fd430c8
 func (m Music) Key() string {
 	return strings.Join([]string{GetBaseKeyFromMediaType(m), m.ID}, "/")
+}
+
+// String provides a standard interface to print Music to output.
+func (m Music) String() string {
+	return fmt.Sprintf(`id: %s
+  title:  %s
+  artist: %s
+  year:   %d
+  date:	  %s`, m.ID, m.Title, m.Artist, m.YearMade, time.Unix(m.DateListened, 0).Format("2006-01-02"))
 }
 
 // NewMusic validates the given inputs and returns a pointer to a Music type.
