@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -151,11 +152,18 @@ func TestNewMediaDbConfig(tt *testing.T) {
 
 func TestMediaDbConfigSave(tt *testing.T) {
 	defer func() {
-		err := os.Remove(GetCurrentConfigFile())
-		if err != nil && !errors.Is(err, os.ErrNotExist) {
+		err := os.Unsetenv(GetOverrideConfigFileEnvVar())
+		if err != nil {
 			tt.Fatal(err)
 		}
 	}()
+
+	defer func(filename string) {
+		err := os.Remove(filename)
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			tt.Fatal(err)
+		}
+	}(GetCurrentConfigFile())
 
 	cfg, err := NewMediaDbConfig("profile", "region", "bucket")
 	if err != nil {
@@ -165,6 +173,52 @@ func TestMediaDbConfigSave(tt *testing.T) {
 	err = cfg.Save()
 	if err != nil {
 		tt.Fatal(err)
+	}
+
+	err = os.Setenv(GetOverrideConfigFileEnvVar(), path.Join(os.TempDir(), ".media_db_test", "config"))
+	if err != nil {
+		tt.Fatal(err)
+	}
+
+	err = cfg.Save()
+	if err != nil {
+		tt.Fatal(err)
+	}
+
+	val, exists := os.LookupEnv(GetOverrideConfigFileEnvVar())
+	if !exists {
+		tt.Fatalf("expected %s to be set, but was not", GetOverrideConfigFileEnvVar())
+	}
+	defer func(filename string) {
+		if !strings.Contains(filename, os.TempDir()) {
+			tt.Fatalf("unexpected value of testing directory, got %q", filename)
+		}
+		err = os.RemoveAll(path.Dir(filename))
+		if err != nil {
+			tt.Fatal(err)
+		}
+	}(val)
+
+	tempFile, err := os.CreateTemp(os.TempDir(), "media_db_test")
+	if err != nil {
+		tt.Fatal(err)
+	}
+	defer func() {
+		err = os.Remove(tempFile.Name())
+		if err != nil {
+			tt.Fatal(err)
+		}
+	}()
+
+	err = os.Setenv(GetOverrideConfigFileEnvVar(), path.Join(tempFile.Name(), "config"))
+	if err != nil {
+		tt.Fatal(err)
+	}
+
+	// This should result in an error since the parent of the config file path is not a directory.
+	err = cfg.Save()
+	if err == nil {
+		tt.Fatal("want error, got nil")
 	}
 }
 

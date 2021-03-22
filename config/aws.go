@@ -108,6 +108,15 @@ func (cfg *MediaDbConfig) Save() error {
 		return err
 	}
 
+	configFileDir := path.Dir(configFile)
+	fileInfo, err := os.Stat(configFileDir)
+
+	if errors.Is(err, os.ErrNotExist) {
+		err = os.Mkdir(configFileDir, 0755)
+	} else if !fileInfo.IsDir() {
+		return fmt.Errorf("%s already exists and is not a directory", configFileDir)
+	}
+
 	err = os.Rename(configFileNew.Name(), configFile)
 	if err != nil {
 		return err
