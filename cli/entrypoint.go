@@ -8,39 +8,38 @@ import (
 	"github.com/alexpcook/media-db-console/service"
 )
 
-const (
-	Create string = "create"
-	Read   string = "read"
-	Update string = "update"
-	Delete string = "delete"
-)
-
 var (
 	MediaDbConfig *config.MediaDbConfig
 	MediaDbClient *service.MediaDbClient
+
+	StdoutLogger *log.Logger = log.New(os.Stdout, "", 0)
+	StderrLogger *log.Logger = log.New(os.Stderr, "", 0)
 )
 
 func init() {
 	MediaDbConfig, err := config.LoadMediaDbConfig()
 	if err != nil {
-		log.Fatal(err)
+		StderrLogger.Fatal(err)
 	}
 
 	MediaDbClient, err = service.NewMediaDbClient(MediaDbConfig)
 	if err != nil {
-		log.Fatal(err)
+		StderrLogger.Fatal(err)
 	}
 }
 
 func Execute() {
 	if len(os.Args) < 2 {
-		log.Fatal("no command given")
+		StderrLogger.Fatal(GetCLIHelpText())
 	}
 
-	switch subCommand := os.Args[1]; subCommand {
-	case Create, Read, Update, Delete:
-		log.Println(subCommand)
-	default:
-		log.Fatalf("%s is not a valid command", subCommand)
+	cmd, err := NewMediaDbCommand(os.Args[1:])
+	if err != nil {
+		StderrLogger.Fatal(err)
+	}
+
+	err = cmd.Run()
+	if err != nil {
+		StderrLogger.Fatal(err)
 	}
 }
