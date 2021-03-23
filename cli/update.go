@@ -43,7 +43,7 @@ func NewUpdateCommand(args []string) (*UpdateCommand, error) {
 			return nil, err
 		}
 
-		expectFlags := 4
+		expectFlags := 5
 		if gotFlags := updateCmd.FlagSet.NFlag(); gotFlags != expectFlags {
 			updateCmd.FlagSet.Usage()
 			return nil, errors.New("")
@@ -72,7 +72,7 @@ func NewUpdateCommand(args []string) (*UpdateCommand, error) {
 			return nil, err
 		}
 
-		expectFlags := 4
+		expectFlags := 5
 		if gotFlags := updateCmd.FlagSet.NFlag(); gotFlags != expectFlags {
 			updateCmd.FlagSet.Usage()
 			return nil, errors.New("")
