@@ -20,7 +20,7 @@ type DeleteCommand struct {
 // creating the command, the usage help text for the command will be returned as a non-nil error.
 func NewDeleteCommand(args []string) (*DeleteCommand, error) {
 	if len(args) < 2 {
-		return nil, fmt.Errorf("usage: mdb delete %s -id=<id>", strings.Join(GetMediaTypes(), "|"))
+		return nil, fmt.Errorf("usage: media-db delete %s -id=<id>", strings.Join(GetMediaTypes(), "|"))
 	}
 
 	mediaType := args[1]

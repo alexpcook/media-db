@@ -19,7 +19,7 @@ type CreateCommand struct {
 // creating the command, the usage help text for the command will be returned as a non-nil error.
 func NewCreateCommand(args []string) (*CreateCommand, error) {
 	if len(args) < 2 {
-		return nil, fmt.Errorf("usage: mdb create %s <flag>... ", strings.Join(GetMediaTypes(), "|"))
+		return nil, fmt.Errorf("usage: media-db create %s <flag>... ", strings.Join(GetMediaTypes(), "|"))
 	}
 
 	mediaType := args[1]

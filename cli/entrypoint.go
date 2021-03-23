@@ -29,14 +29,14 @@ func InitDb() {
 	if err != nil {
 		StderrLogger.Fatal(fmt.Sprintf(`%s
 		
-run 'mdb setup' to fix the configuration issue`, err.Error()))
+run 'media-db setup' to fix the configuration issue`, err.Error()))
 	}
 
 	MediaDbClient, err = service.NewMediaDbClient(MediaDbConfig)
 	if err != nil {
 		StderrLogger.Fatal(fmt.Sprintf(`%s
 		
-run 'mdb setup' to fix the configuration issue`, err.Error()))
+run 'media-db setup' to fix the configuration issue`, err.Error()))
 	}
 }
 

@@ -48,7 +48,7 @@ func GetMediaTypes() []string {
 
 // GetCLIHelpText returns the general help text for the CLI.
 func GetCLIHelpText() string {
-	return fmt.Sprintf(`usage: mdb <command> [%s] [<flag>...]
+	return fmt.Sprintf(`usage: media-db <command> [%s] [<flag>...]
 
 where <command> is one of:
   setup		Configure the database connection to AWS
@@ -61,7 +61,7 @@ where <command> is one of:
 // GetInvalidCommandHelpText returns help text intended to be displayed
 // when an invalid command is entered by the user.
 func GetInvalidCommandHelpText(invalidCmd string) string {
-	return fmt.Sprintf(`mdb: '%s' is an invalid command
+	return fmt.Sprintf(`media-db: '%s' is an invalid command
 
 %s`, invalidCmd, GetCLIHelpText())
 }
@@ -69,7 +69,7 @@ func GetInvalidCommandHelpText(invalidCmd string) string {
 // GetInvalidMediaTypeHelpText returns help text intended to be displayed
 // when an invalid media type is entered by the user.
 func GetInvalidMediaTypeHelpText(cmd, mediaType string) string {
-	return fmt.Sprintf(`mdb: '%s' is an invalid media type, want one of '%s'
+	return fmt.Sprintf(`media-db: '%s' is an invalid media type, want one of '%s'
 
 %s`, mediaType, strings.Join(GetMediaTypes(), ", "), GetCommandHelpText(cmd))
 }
@@ -84,11 +84,11 @@ func GetCommandHelpText(cmd string) string {
 		if cmd == UpdateCmdName() {
 			flagsHelpText = fmt.Sprintf("%s %s", "-id=<id>", flagsHelpText)
 		}
-		return fmt.Sprintf(`usage: mdb %s %s %s`, cmd, mediaTypes, flagsHelpText)
+		return fmt.Sprintf(`usage: media-db %s %s %s`, cmd, mediaTypes, flagsHelpText)
 	case ReadCmdName():
-		return fmt.Sprintf(`usage: mdb %s [%s] [-id=<id>]`, cmd, mediaTypes)
+		return fmt.Sprintf(`usage: media-db %s [%s] [-id=<id>]`, cmd, mediaTypes)
 	case DeleteCmdName():
-		return fmt.Sprintf(`usage: mdb %s %s -id=<id>`, cmd, mediaTypes)
+		return fmt.Sprintf(`usage: media-db %s %s -id=<id>`, cmd, mediaTypes)
 	default:
 		return GetInvalidCommandHelpText(cmd)
 	}

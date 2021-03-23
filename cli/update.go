@@ -20,7 +20,7 @@ type UpdateCommand struct {
 // creating the command, the usage help text for the command will be returned as a non-nil error.
 func NewUpdateCommand(args []string) (*UpdateCommand, error) {
 	if len(args) < 2 {
-		return nil, fmt.Errorf("usage: mdb udpate %s <flag>... ", strings.Join(GetMediaTypes(), "|"))
+		return nil, fmt.Errorf("usage: media-db udpate %s <flag>... ", strings.Join(GetMediaTypes(), "|"))
 	}
 
 	mediaType := args[1]
