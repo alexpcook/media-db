@@ -9,11 +9,14 @@ import (
 	"github.com/alexpcook/media-db-console/schema"
 )
 
+// CreateCommand provides an interface between the CLI and the MediaDbClient create service.
 type CreateCommand struct {
 	FlagSet  *flag.FlagSet
 	NewMedia schema.Media
 }
 
+// NewCreateCommand returns a pointer to a new CreateCommand struct. If there is a problem
+// creating the command, the usage help text for the command will be returned as a non-nil error.
 func NewCreateCommand(args []string) (*CreateCommand, error) {
 	if len(args) < 2 {
 		return nil, fmt.Errorf("usage: mdb create %s <flag>... ", strings.Join(GetMediaTypes(), "|"))
@@ -80,6 +83,8 @@ func NewCreateCommand(args []string) (*CreateCommand, error) {
 	return createCmd, nil
 }
 
+// Run executes the CreateCommand. It returns a non-nil error
+// if the underlying create service encounters a problem.
 func (c *CreateCommand) Run() error {
 	return MediaDbClient.Create(c.NewMedia)
 }

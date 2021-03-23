@@ -9,12 +9,15 @@ import (
 	"github.com/alexpcook/media-db-console/schema"
 )
 
+// UpdateCommand provides an interface between the CLI and the MediaDbClient update service.
 type UpdateCommand struct {
 	FlagSet      *flag.FlagSet
 	ID           string
 	UpdatedMedia schema.Media
 }
 
+// NewUpdateCommand returns a pointer to a new UpdateCommand struct. If there is a problem
+// creating the command, the usage help text for the command will be returned as a non-nil error.
 func NewUpdateCommand(args []string) (*UpdateCommand, error) {
 	if len(args) < 2 {
 		return nil, fmt.Errorf("usage: mdb udpate %s <flag>... ", strings.Join(GetMediaTypes(), "|"))
@@ -89,6 +92,8 @@ func NewUpdateCommand(args []string) (*UpdateCommand, error) {
 	return updateCmd, nil
 }
 
+// Run executes the UpdateCommand. It returns a non-nil error
+// if the underlying update service encounters a problem.
 func (u *UpdateCommand) Run() error {
 	return MediaDbClient.Update(u.ID, u.UpdatedMedia)
 }

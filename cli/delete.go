@@ -9,12 +9,15 @@ import (
 	"github.com/alexpcook/media-db-console/schema"
 )
 
+// DeleteCommand provides an interface between the CLI and the MediaDbClient delete service.
 type DeleteCommand struct {
 	FlagSet   *flag.FlagSet
 	ID        string
 	MediaType schema.Media
 }
 
+// NewDeleteCommand returns a pointer to a new DeleteCommand struct. If there is a problem
+// creating the command, the usage help text for the command will be returned as a non-nil error.
 func NewDeleteCommand(args []string) (*DeleteCommand, error) {
 	if len(args) < 2 {
 		return nil, fmt.Errorf("usage: mdb delete %s -id=<id>", strings.Join(GetMediaTypes(), "|"))
@@ -50,6 +53,8 @@ func NewDeleteCommand(args []string) (*DeleteCommand, error) {
 	return deleteCmd, nil
 }
 
+// Run executes the DeleteCommand. It returns a non-nil error
+// if the underlying delete service encounters a problem.
 func (d *DeleteCommand) Run() error {
 	return MediaDbClient.Delete(d.ID, d.MediaType)
 }

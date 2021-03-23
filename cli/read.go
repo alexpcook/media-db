@@ -7,12 +7,15 @@ import (
 	"github.com/alexpcook/media-db-console/schema"
 )
 
+// ReadCommand provides an interface between the CLI and the MediaDbClient read service.
 type ReadCommand struct {
 	FlagSet   *flag.FlagSet
 	ID        string
 	MediaType schema.Media
 }
 
+// NewReadCommand returns a pointer to a new ReadCommand struct. If there is a problem
+// creating the command, the usage help text for the command will be returned as a non-nil error.
 func NewReadCommand(args []string) (*ReadCommand, error) {
 	readCmd := &ReadCommand{}
 
@@ -44,6 +47,9 @@ func NewReadCommand(args []string) (*ReadCommand, error) {
 	return readCmd, nil
 }
 
+// Run executes the ReadCommand. It returns a non-nil error
+// if the underlying read service encounters a problem. The
+// results of the query are written to standard output.
 func (r *ReadCommand) Run() error {
 	res, err := MediaDbClient.Read(r.ID, r.MediaType)
 	if err != nil {

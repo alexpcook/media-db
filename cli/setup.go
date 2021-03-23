@@ -7,11 +7,14 @@ import (
 	"github.com/alexpcook/media-db-console/config"
 )
 
+// SetupCommand provides an interface between the CLI and the MediaDbConfig save method.
 type SetupCommand struct {
 	FlagSet *flag.FlagSet
 	Config  *config.MediaDbConfig
 }
 
+// NewSetupCommand returns a pointer to a new SetupCommand struct. If there is a problem
+// creating the command, the usage help text for the command will be returned as a non-nil error.
 func NewSetupCommand(args []string) (*SetupCommand, error) {
 	setupCmd := &SetupCommand{
 		FlagSet: flag.NewFlagSet("setup", flag.ExitOnError),
@@ -41,6 +44,8 @@ func NewSetupCommand(args []string) (*SetupCommand, error) {
 	return setupCmd, nil
 }
 
+// Run executes the SetupCommand. It returns a non-nil error
+// if the underlying save action encounters a problem.
 func (s *SetupCommand) Run() error {
 	return s.Config.Save()
 }
