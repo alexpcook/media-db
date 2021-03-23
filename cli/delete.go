@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/alexpcook/media-db-console/schema"
+	"github.com/alexpcook/media-db/schema"
 )
 
 // DeleteCommand provides an interface between the CLI and the MediaDbClient delete service.

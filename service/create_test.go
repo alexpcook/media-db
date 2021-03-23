@@ -3,8 +3,8 @@ package service
 import (
 	"testing"
 
-	"github.com/alexpcook/media-db-console/config"
-	"github.com/alexpcook/media-db-console/schema"
+	"github.com/alexpcook/media-db/config"
+	"github.com/alexpcook/media-db/schema"
 )
 
 func TestCreate(tt *testing.T) {

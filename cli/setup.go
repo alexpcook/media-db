@@ -4,7 +4,7 @@ import (
 	"errors"
 	"flag"
 
-	"github.com/alexpcook/media-db-console/config"
+	"github.com/alexpcook/media-db/config"
 )
 
 // SetupCommand provides an interface between the CLI and the MediaDbConfig save method.

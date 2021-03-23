@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/alexpcook/media-db-console/schema"
+	"github.com/alexpcook/media-db/schema"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 

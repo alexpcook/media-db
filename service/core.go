@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	cfg "github.com/alexpcook/media-db-console/config"
+	cfg "github.com/alexpcook/media-db/config"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )

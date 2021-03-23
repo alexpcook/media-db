@@ -1,4 +1,4 @@
-module github.com/alexpcook/media-db-console
+module github.com/alexpcook/media-db
 
 go 1.16
 

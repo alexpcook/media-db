@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/alexpcook/media-db-console/config"
+	"github.com/alexpcook/media-db/config"
 )
 
 func TestMain(m *testing.M) {

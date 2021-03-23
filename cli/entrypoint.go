@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/alexpcook/media-db-console/config"
-	"github.com/alexpcook/media-db-console/service"
+	"github.com/alexpcook/media-db/config"
+	"github.com/alexpcook/media-db/service"
 )
 
 var (

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"flag"
 
-	"github.com/alexpcook/media-db-console/schema"
+	"github.com/alexpcook/media-db/schema"
 )
 
 // ReadCommand provides an interface between the CLI and the MediaDbClient read service.
