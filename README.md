@@ -19,32 +19,21 @@ Currently supported media types are movies and music. Other types to potentially
 * (_Optional_) Create a short alias for the `media-db` command (e.g. on Linux `alias mdb=media-db`).
 
 ## Setup
+
 * Run `media-db setup` to configure the AWS profile, region, and S3 bucket name connection settings.
-* * This saves a configuration file to $HOME/.mediadb/config. The default configuration path can be overriden by setting the environment variable `MEDIA_DB_CONFIG_FILE`.
+  * This saves a configuration file to $HOME/.mediadb/config. The default configuration path can be overridden by setting the environment variable `MEDIA_DB_CONFIG_FILE`.
 
 ## Usage
 
-* Main CLI help text:
-
-```
-usage: media-db <command> [movie|music] [<flag>...]
-
-where <command> is one of:
-  setup		Configure the database connection to AWS
-  create	Create an entry in the database
-  read		Read entries from the database
-  update	Update an entry in the database
-  delete	Delete an entry from the database
-```
-
 * There are four main commands for interacting with the database.
-* * `create` - Creates entries in the database. The required flags for creating objects vary depending on the type of media entry being created (e.g. movie vs. music).
-* * `read` - Reads entries from the database. `media-db read` reads all entries. It's also possible to filter by media type and id (e.g. `media-db read music` and `media-db read movie -id=<id>` respectively).
-* * `update` - Updates entries in the database. In addition to all flags required to create the media type, the `id` of the entry to update is also a required flag.
-* * `delete` - Deletes entries from the database. The `id` flag is required.
+  * `create` - Creates entries in the database. The required flags for creating objects vary depending on the type of media entry being created (e.g. movie vs. music).
+  * `read` - Reads entries from the database. `media-db read` reads all entries. It's also possible to filter by media type and id (e.g. `media-db read music` and `media-db read movie -id=<id>` respectively).
+  * `update` - Updates entries in the database. In addition to all flags required to create the media type, the `id` of the entry to update is also a required flag.
+  * `delete` - Deletes entries from the database. The `id` flag is required.
 
 ## Credits
 
 This code makes use of APIs in:
+
 * [AWS SDK for Go v2](https://github.com/aws/aws-sdk-go-v2/) for interacting programmatically between Go and AWS S3.
 * [uuid](https://github.com/google/uuid) for generating unique IDs for the S3 object storage keys.
