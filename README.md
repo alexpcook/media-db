@@ -1,6 +1,7 @@
 # media-db
 
 🎥 🎶
+
 `media-db` is a CLI that uses AWS S3 as a database to keep track of movies, music, and other media. It's a useful way to record media you've consumed over time and query it for reference in the future.
 
 Currently supported media types are movies and music. Other types to potentially add in the future include books, visual art, and theater.
