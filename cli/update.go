@@ -28,7 +28,7 @@ func NewUpdateCommand(args []string) (*UpdateCommand, error) {
 
 	switch mediaType {
 	case MovieMediaType():
-		updateCmd.FlagSet = flag.NewFlagSet("update movie", flag.ExitOnError)
+		updateCmd.FlagSet = flag.NewFlagSet("update movie", flag.ContinueOnError)
 		movie := new(schema.Movie)
 		var dateStr string
 
@@ -57,7 +57,7 @@ func NewUpdateCommand(args []string) (*UpdateCommand, error) {
 		movie.ID = updateCmd.ID
 		updateCmd.UpdatedMedia = *movie
 	case MusicMediaType():
-		updateCmd.FlagSet = flag.NewFlagSet("update music", flag.ExitOnError)
+		updateCmd.FlagSet = flag.NewFlagSet("update music", flag.ContinueOnError)
 		music := new(schema.Music)
 		var dateStr string
 

@@ -17,7 +17,7 @@ type SetupCommand struct {
 // creating the command, the usage help text for the command will be returned as a non-nil error.
 func NewSetupCommand(args []string) (*SetupCommand, error) {
 	setupCmd := &SetupCommand{
-		FlagSet: flag.NewFlagSet("setup", flag.ExitOnError),
+		FlagSet: flag.NewFlagSet("setup", flag.ContinueOnError),
 	}
 
 	awsConfig := &config.MediaDbConfig{}

@@ -27,7 +27,7 @@ func NewCreateCommand(args []string) (*CreateCommand, error) {
 
 	switch mediaType {
 	case MovieMediaType():
-		createCmd.FlagSet = flag.NewFlagSet("create movie", flag.ExitOnError)
+		createCmd.FlagSet = flag.NewFlagSet("create movie", flag.ContinueOnError)
 		movie := new(schema.Movie)
 		var dateStr string
 
@@ -52,7 +52,7 @@ func NewCreateCommand(args []string) (*CreateCommand, error) {
 			return nil, err
 		}
 	case MusicMediaType():
-		createCmd.FlagSet = flag.NewFlagSet("create music", flag.ExitOnError)
+		createCmd.FlagSet = flag.NewFlagSet("create music", flag.ContinueOnError)
 		music := new(schema.Music)
 		var dateStr string
 

@@ -28,10 +28,10 @@ func NewReadCommand(args []string) (*ReadCommand, error) {
 
 	switch mediaType {
 	case MovieMediaType():
-		readCmd.FlagSet = flag.NewFlagSet("read movie", flag.ExitOnError)
+		readCmd.FlagSet = flag.NewFlagSet("read movie", flag.ContinueOnError)
 		readCmd.MediaType = schema.Movie{}
 	case MusicMediaType():
-		readCmd.FlagSet = flag.NewFlagSet("read music", flag.ExitOnError)
+		readCmd.FlagSet = flag.NewFlagSet("read music", flag.ContinueOnError)
 		readCmd.MediaType = schema.Music{}
 	default:
 		return nil, errors.New(GetInvalidMediaTypeHelpText(ReadCmdName(), mediaType))

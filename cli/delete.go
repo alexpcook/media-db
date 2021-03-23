@@ -28,10 +28,10 @@ func NewDeleteCommand(args []string) (*DeleteCommand, error) {
 
 	switch mediaType {
 	case MovieMediaType():
-		deleteCmd.FlagSet = flag.NewFlagSet("delete movie", flag.ExitOnError)
+		deleteCmd.FlagSet = flag.NewFlagSet("delete movie", flag.ContinueOnError)
 		deleteCmd.MediaType = schema.Movie{}
 	case MusicMediaType():
-		deleteCmd.FlagSet = flag.NewFlagSet("delete music", flag.ExitOnError)
+		deleteCmd.FlagSet = flag.NewFlagSet("delete music", flag.ContinueOnError)
 		deleteCmd.MediaType = schema.Music{}
 	default:
 		return nil, errors.New(GetInvalidMediaTypeHelpText(DeleteCmdName(), mediaType))
